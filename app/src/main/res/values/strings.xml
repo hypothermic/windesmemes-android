@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Windesmemes</string>
+    <string name="action_preferences">Settings</string>
+
+    <string name="account_name_placeholder">Nog niet ingelogd.</string>
+    <string name="action_mail_placeholder"></string>
+</resources>

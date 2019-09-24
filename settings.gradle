@@ -1,0 +1,2 @@
+include ':app', ':windesmemes-retrofit', ':windesmemes-model'
+rootProject.name='Windesmemes-Android'
