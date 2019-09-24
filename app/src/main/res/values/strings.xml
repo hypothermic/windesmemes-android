@@ -3,5 +3,6 @@
     <string name="action_preferences">Settings</string>
 
     <string name="account_name_placeholder"></string>
-    <string name="action_mail_placeholder">Log in met je WindesMemes account.</string>
+    <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
+    <string name="message_refresh">Herladen…</string>
 </resources>

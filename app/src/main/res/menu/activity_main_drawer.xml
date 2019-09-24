@@ -3,19 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_mode"
+        android:checkableBehavior="single"
+        android:title="Modes">
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="TODO" />
+            android:id="@+id/nav_mode_hot"
+            android:icon="@drawable/ic_whatshot_black_24dp"
+            android:title="Hot" />
+        <item
+            android:id="@+id/nav_mode_trending"
+            android:icon="@drawable/ic_trending_up_black_24dp"
+            android:title="Trending" />
+        <item
+            android:id="@+id/nav_mode_fresh"
+            android:icon="@drawable/ic_new_releases_black_24dp"
+            android:title="Fresh" />
+        <item
+            android:id="@+id/nav_mode_best"
+            android:icon="@drawable/ic_star_black_24dp"
+            android:title="Best" />
     </group>
 
-    <item android:title="Communicate">
+    <item
+        android:id="@+id/nav_util"
+        android:title="Preferences">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="TODO" />
+                android:id="@+id/nav_preferences"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Dark Theme" />
+            <item
+                android:id="@+id/nav_account_logout"
+                android:icon="@drawable/ic_clear_black_24dp"
+                android:title="Logout" />
         </menu>
     </item>
 </menu>
