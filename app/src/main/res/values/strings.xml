@@ -5,4 +5,5 @@
     <string name="account_name_placeholder"></string>
     <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
     <string name="message_refresh">Herladen…</string>
+    <string name="message_refreshed">Herladen successvol.</string>
 </resources>

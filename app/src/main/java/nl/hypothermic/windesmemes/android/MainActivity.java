@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Consumer;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
@@ -39,17 +40,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final ActivityTheme DEFAULT_THEME = ActivityTheme.LIGHT;
 
     private AppBarConfiguration appBarConfig;
-
-    private MemeViewModel viewModel;
     private RecyclerView cardView;
 
-    public static void refreshMemes(final AppCompatActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode) {
+    private MemeViewModel viewModel;
+    private volatile MemeMode lastMode;
+
+    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode) {
+        refreshMemes(activity, cardView, model, mode, null);
+    }
+
+    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode, final Consumer<Void> callback) {
         model.getData(mode).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
                 cardView.setAdapter(new MemeAdapter(memes, activity));
+                if (callback != null) {
+                    callback.accept(null);
+                }
             }
         });
+        activity.lastMode = mode;
     }
 
     @Override
@@ -62,13 +72,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        FloatingActionButton floating = findViewById(R.id.fab);
+        floating.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, getString(R.string.message_refresh), Snackbar.LENGTH_LONG).show();
+            public void onClick(final View view) {
+                refreshMemes(MainActivity.this, cardView, viewModel, lastMode, new Consumer<Void>() {
+                    @Override
+                    public void accept(Void ignore) {
+                        Snackbar.make(view, getString(R.string.message_refreshed), Snackbar.LENGTH_LONG).show();
+                    }
+                });
             }
         });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -102,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
-        LogWrapper.error(this, "X ITEM SELECT " + id);
         MemeMode newMode = null;
         if (id == R.id.nav_mode_hot) {
             newMode = MemeMode.HOT;
