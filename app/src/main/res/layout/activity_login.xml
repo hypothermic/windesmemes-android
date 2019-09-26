@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/global_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,17 +37,42 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="Name" />
+                    android:hint="@string/login_field_username_hint"
+                    android:inputType="textVisiblePassword|textNoSuggestions|textPersonName" />
 
                 <EditText
                     android:id="@+id/login_field_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/login_field_password_hint"
                     android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/login_interactable_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dip"
+                    android:layout_marginBottom="8dip"
+                    android:background="@color/colorAccent"
+                    android:text="@string/login_interactable_submit_text" />
+
+                <Button
+                    android:id="@+id/login_interactable_policy_wm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dip"
+                    android:text="@string/login_interactable_policy_wm_text" />
+
+                <Button
+                    android:id="@+id/login_interactable_policy_ht"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="36dip"
+                    android:text="@string/login_interactable_policy_ht_text" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
