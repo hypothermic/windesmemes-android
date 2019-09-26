@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
+import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.MemeViewModel;
 import nl.hypothermic.windesmemes.android.ui.ActivityTheme;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
@@ -101,6 +102,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cardView.setLayoutManager(new LinearLayoutManager(this));
 
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
+
+        AuthenticationManager.acquire(this).refreshSession(null);
+        AuthenticationManager.acquire(this).userAuthenticate(new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                LogWrapper.info(this, "RESULT: " + false);
+            }
+        });
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
     }
 
@@ -118,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        LogWrapper.error(this, "X PRE SELECT");
         int id = menuItem.getItemId();
         MemeMode newMode = null;
         if (id == R.id.nav_mode_hot) {
