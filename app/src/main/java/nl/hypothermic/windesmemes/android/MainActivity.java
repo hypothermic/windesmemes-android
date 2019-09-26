@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.util.Consumer;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         refreshMemes(activity, cardView, model, mode, null);
     }
 
-    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode, final Consumer<Void> callback) {
-        model.getData(mode).observe(activity, new Observer<List<Meme>>() {
+    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, final MemeViewModel model, MemeMode mode, final Consumer<Void> callback) {
+        model.clearCache().getData(mode).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
                 cardView.setAdapter(new MemeAdapter(memes, activity));
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
         appBarConfig = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_mode, R.id.nav_util)
                                                 .setDrawerLayout(drawer)
@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
 
         cardView = findViewById(R.id.main_cards); // TODO butterknife or view binding (studio canary 11+)
         cardView.setLayoutManager(new LinearLayoutManager(this));
@@ -104,12 +106,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
 
         AuthenticationManager.acquire(this).refreshSession(null);
-        AuthenticationManager.acquire(this).userAuthenticate(new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                LogWrapper.info(this, "RESULT: " + false);
-            }
-        });
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
     }
 
@@ -127,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        LogWrapper.error(this, "X PRE SELECT");
         int id = menuItem.getItemId();
         MemeMode newMode = null;
         if (id == R.id.nav_mode_hot) {

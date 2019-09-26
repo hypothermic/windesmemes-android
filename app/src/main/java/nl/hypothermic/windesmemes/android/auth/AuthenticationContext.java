@@ -18,7 +18,7 @@ import retrofit2.Response;
  */
 public class AuthenticationContext {
 
-    private volatile AuthenticationSession session;
+    private final AuthenticationSession session = new AuthenticationSession();
     private volatile AuthenticationUser user;
 
     /**
@@ -64,7 +64,7 @@ public class AuthenticationContext {
     }
 
     public boolean isUserAuthenticated() {
-        return user.getUserToken() != null;
+        return user != null && user.getUserToken() != null;
     }
 
     public void userAuthenticate(final Observer<Boolean> onFinishedCallback, String username, String password) {

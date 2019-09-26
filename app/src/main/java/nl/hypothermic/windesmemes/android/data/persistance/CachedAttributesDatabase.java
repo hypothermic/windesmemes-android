@@ -26,7 +26,9 @@ public abstract class CachedAttributesDatabase extends RoomDatabase {
     public static CachedAttributesDatabase getInstance(Context context) {
         synchronized (LOCK) {
             if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context, CachedAttributesDatabase.class, "cache.db").build();
+                INSTANCE = Room.databaseBuilder(context, CachedAttributesDatabase.class, "cache.db")
+                                   .fallbackToDestructiveMigration()
+                                   .build();
             }
             return INSTANCE;
         }
