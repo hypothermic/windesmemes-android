@@ -30,7 +30,7 @@ public class ContentRepository {
 
     public MutableLiveData<List<Meme>> getMemes(int count, int start, MemeMode mode) {
         final MutableLiveData<List<Meme>> memeData = new MutableLiveData<>();
-        WindesMemesAPI.getInstance().getContentEndpoint().getMemes(10, 0, mode.getAsString()).enqueue(new Callback<List<Meme>>() {
+        WindesMemesAPI.getInstance().getContentEndpoint().getMemes(count, start, mode.getAsString()).enqueue(new Callback<List<Meme>>() {
             @Override
             public void onResponse(Call<List<Meme>> call, Response<List<Meme>> response) {
                 if (response.isSuccessful()) {

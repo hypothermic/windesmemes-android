@@ -31,20 +31,65 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    android:id="@+id/login_result_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dip"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textColor="@color/colorError"
+                    android:visibility="gone" />
+
                 <EditText
                     android:id="@+id/login_field_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="Name" />
+                    android:hint="@string/login_field_username_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textNoSuggestions|textPersonName"
+                    android:minHeight="56dip" />
 
                 <EditText
                     android:id="@+id/login_field_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="textPassword" />
+                    android:hint="@string/login_field_password_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textPassword"
+                    android:minHeight="56dip" />
+
+                <Button
+                    android:id="@+id/login_interactable_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dip"
+                    android:layout_marginBottom="8dip"
+                    android:background="@drawable/button_background_shadow"
+                    android:minWidth="96dip"
+                    android:text="@string/login_interactable_submit_text"
+                    android:textColor="@color/ic_launcher_background"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/login_interactable_policy_wm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="96dip"
+                    android:minHeight="40dip"
+                    android:text="@string/login_interactable_policy_wm_text"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/login_interactable_policy_ht"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="96dip"
+                    android:minHeight="40dip"
+                    android:text="@string/login_interactable_policy_ht"
+                    android:textSize="12sp" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

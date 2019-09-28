@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#272727</color>
+    <color name="colorPrimaryFade">#202020</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF7000</color>
     <color name="colorBackground">#DADADA</color>
+    <color name="colorError">#FF2600</color>
 </resources>

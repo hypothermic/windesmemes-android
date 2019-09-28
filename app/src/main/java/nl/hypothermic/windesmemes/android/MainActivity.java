@@ -1,6 +1,8 @@
 package nl.hypothermic.windesmemes.android;
 
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -100,12 +102,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
+        View headerView = navigationView.getHeaderView(0);
+        headerView.findViewById(R.id.nav_header_container).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!AuthenticationManager.acquire(MainActivity.this).isUserAuthenticated()) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    // TODO show user options??
+                }
+            }
+        });
+
         cardView = findViewById(R.id.main_cards); // TODO butterknife or view binding (studio canary 11+)
         cardView.setLayoutManager(new LinearLayoutManager(this));
 
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
 
-        AuthenticationManager.acquire(this).refreshSession(null);
+        AuthenticationManager.acquire(this.getApplicationContext()).refreshSession(null);
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
     }
 
