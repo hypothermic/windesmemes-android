@@ -23,10 +23,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView resultTextView;
 
-    private EditText usernameField, passwordField;
-    private volatile EditText[] inputFields;
+    private EditText usernameField,
+                     passwordField;
 
-    private Button interactableSubmit, interactablePolicyWM, interactablePolicyHT;
+    private Button   interactableSubmit,
+                     interactablePolicyWM,
+                     interactablePolicyHT;
+
+    private volatile EditText[] inputFields;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +66,9 @@ public class LoginActivity extends AppCompatActivity {
                         lockFields(false, inputFields);
                         if (aBoolean != null) {
                             if (aBoolean) {
-                                LogWrapper.info(this, "Login successful");
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             } else {
-                                resultTextView.setText("Login not successful"); // TODO show error message and @string
-                                LogWrapper.error(this, "TODO handle login error"); // TODO
+                                usernameField.setError(getString(R.string.login_error_generic));
                             }
                         } else {
                             LogWrapper.error(this, "TODO handle error 4"); // TODO

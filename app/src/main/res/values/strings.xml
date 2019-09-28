@@ -11,6 +11,7 @@
     <string name="login_field_username_hint">Username</string>
     <string name="login_field_password_hint">Password</string>
     <string name="login_error_invalid_input">Invalid input!</string>
+    <string name="login_error_generic">Error while authenticating!</string>
     <string name="login_interactable_submit_text">Inloggen</string>
     <string name="login_interactable_policy_wm_text">Windesmemes Privacy Policy</string>
     <string name="login_interactable_policy_ht">Hypothermic Privacy Statement</string>
