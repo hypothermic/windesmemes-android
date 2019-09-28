@@ -68,7 +68,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
         holder.meme.setLayoutParams(layoutParams);
 
-        // If local cache database contains meme image, load from there. Otherwise, request it via the API.
+        // If local cache database contains meme image, load from cache. Otherwise, request it via the API.
         final LiveData<MemeCachedAttributes> liveData = CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao().get(meme.imageUrl);
         liveData.observe(((MainActivity) ctx), new Observer<MemeCachedAttributes>() {
             @Override
@@ -121,11 +121,29 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.title.setText(meme.title);
         holder.username.setText(meme.username);
         holder.date.setText(meme.date);
+        holder.vote.setText(meme.vote + "");
 
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LogWrapper.error(this, "TODO show user profile");
+            }
+        });
+
+        View.OnClickListener upvoteListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.vote.setText((meme.vote + 1) + "");
+                LogWrapper.info(this, "TODO cast upvote to server");
+            }
+        };
+        holder.vote.setOnClickListener(upvoteListener);
+        holder.upvote.setOnClickListener(upvoteListener);
+        holder.downvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.vote.setText((meme.vote - 1) + "");
+                LogWrapper.info(this, "TODO cast downvote to server");
             }
         });
     }
@@ -134,5 +152,4 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
     public int getItemCount() {
         return memes.size();
     }
-
 }

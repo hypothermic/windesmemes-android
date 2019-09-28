@@ -13,18 +13,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContentRepository {
+public class MemeRepository {
 
-    private static ContentRepository INSTANCE;
+    private static MemeRepository INSTANCE;
 
-    public static ContentRepository getInstance() {
+    public static MemeRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ContentRepository();
+            INSTANCE = new MemeRepository();
         }
         return INSTANCE;
     }
 
-    private ContentRepository() {
+    private MemeRepository() {
 
     }
 

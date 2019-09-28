@@ -31,4 +31,18 @@ public class Meme {
     @SerializedName("date")
     public String date; // TODO format
 
+    @Override
+    public String toString() {
+        return "Meme [" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", userId=" + userId +
+                ", userKarma=" + userKarma +
+                ", vote=" + vote +
+                ", flair='" + flair + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                "]";
+    }
 }

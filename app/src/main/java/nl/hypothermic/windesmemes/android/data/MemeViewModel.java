@@ -11,6 +11,6 @@ public class MemeViewModel extends ComplexDataViewModel<List<Meme>, MemeMode> {
 
     @Override
     protected MutableLiveData<List<Meme>> loadData(MemeMode enumeration) {
-        return ContentRepository.getInstance().getMemes(10, 0, enumeration); // TODO un-hardcode count, start
+        return MemeRepository.getInstance().getMemes(10, 0, enumeration); // TODO un-hardcode count, start
     }
 }
