@@ -103,6 +103,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
+                                android:minWidth="20dip"
                                 android:text="69"
                                 android:textAlignment="center"
                                 android:textColor="?attr/colorTextSecondary" />

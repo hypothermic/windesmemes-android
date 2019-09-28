@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,7 @@ import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
 import nl.hypothermic.windesmemes.model.Meme;
+import nl.hypothermic.windesmemes.model.Vote;
 import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
 
 public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
@@ -116,8 +118,6 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.title.setText(meme.title);
         holder.username.setText(meme.username);
         holder.date.setText(meme.date);
-        holder.vote.setText(meme.parseKarma() + meme.parseVote() + "");
-        LogWrapper.info(this, "KARMA: %s (%d) [%s]", meme.karma, meme.parseKarma() + meme.parseVote(), meme.vote);
 
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,14 +126,37 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
             }
         });
 
+        final Observer<Vote> voteObserver = new Observer<Vote>() {
+            @Override
+            public void onChanged(Vote vote) {
+                holder.vote.setText(meme.parseKarma() + vote.getWeight() + "");
+                LogWrapper.info(this, "KARMA: %s (%d) [%s]", meme.karma, meme.parseKarma() + meme.parseVote(), meme.vote);
+                LogWrapper.error(this, "TODO send cast vote result to server");
+                switch (vote) {
+                    case UPVOTE:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_green_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_black_24dp));
+                        break;
+                    case NEUTRAL:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_black_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_black_24dp));
+                        break;
+                    case DOWNVOTE:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_black_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_red_24dp));
+                        break;
+                }
+            }
+        };
+
+        // Trigger initial
+        voteObserver.onChanged(Vote.fromIndex(meme.parseVote()));
+
+        // Trigger on user input
         View.OnClickListener upvoteListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!meme.vote.equals("1")) {
-                    meme.vote = "1";
-                    holder.vote.setText(((meme.parseKarma()) + 1) + "");
-                    LogWrapper.info(this, "TODO cast upvote to server");
-                }
+                voteObserver.onChanged(Vote.UPVOTE);
             }
         };
         holder.vote.setOnClickListener(upvoteListener);
@@ -141,11 +164,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!meme.vote.equals("-1")) {
-                    meme.vote = "-1";
-                    holder.vote.setText(((meme.parseKarma()) - 1) + "");
-                    LogWrapper.info(this, "TODO cast downvote to server");
-                }
+                voteObserver.onChanged(Vote.DOWNVOTE);
             }
         });
     }

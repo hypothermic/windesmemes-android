@@ -8,6 +8,7 @@
         <item name="colorFragBackground">@color/colorFragmentBackground</item>
         <item name="colorTextMain">@color/colorText</item>
         <item name="colorTextSecondary">@color/colorTextSecondary</item>
+        <item name="colorIconMain">@color/colorBackground</item>
     </style>
 
     <style name="AppTheme.DARK" parent="Theme.AppCompat.Light.NoActionBar">
@@ -18,6 +19,7 @@
         <item name="colorFragBackground">@color/colorFragmentBackgroundDark</item>
         <item name="colorTextMain">@color/colorTextDark</item>
         <item name="colorTextSecondary">@color/colorTextSecondaryDark</item>
+        <item name="colorIconMain">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
