@@ -18,4 +18,5 @@ public interface AuthenticationEndpoint {
     @FormUrlEncoded
     @POST("get_token")
     Call<Integer> getUserToken(@Field("username") String username, @Field("password") String password, @Header("Cookie") String sessionCookie);
+
 }
