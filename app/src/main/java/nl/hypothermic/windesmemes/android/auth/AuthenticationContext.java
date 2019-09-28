@@ -62,7 +62,9 @@ public class AuthenticationContext {
                 }
             });
         } else {
-            onFinishedCallback.onChanged(null);
+            if (onFinishedCallback != null) {
+                onFinishedCallback.onChanged(null);
+            }
         }
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorCardBackground" format="reference" />
+    <attr name="colorFragBackground" format="reference" />
+    <attr name="colorTextMain"       format="reference" />
+    <attr name="colorTextSecondary"  format="reference" />
+
+</resources>

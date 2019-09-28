@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        //setTheme(ActivityTheme.fromIndex(sharedPref.getInt("theme", DEFAULT_THEME.getIndex())).getStyleId());
+        setTheme(ActivityTheme.fromIndex(sharedPref.getInt("theme", DEFAULT_THEME.getIndex())).getStyleId());
+        LogWrapper.error(this, "MODE: %d", sharedPref.getInt("theme", DEFAULT_THEME.getIndex()));
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -151,8 +153,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_mode_best) {
             newMode = MemeMode.BEST;
         }
+        if (id == R.id.nav_preferences) {
+            SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+            int currentTheme = preferences.getInt("theme", DEFAULT_THEME.getIndex());
+            preferences.edit().putInt("theme", currentTheme == 0 ? 1 : 0).commit();
+            recreate();
+        }
         if (newMode != null) {
-            LogWrapper.error(this, "REFRESH %s", newMode.getAsString());
             refreshMemes(this, cardView, viewModel, newMode);
         }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);

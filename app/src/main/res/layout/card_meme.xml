@@ -12,7 +12,8 @@
         app:cardCornerRadius="@dimen/cardview_card_rounding"
         app:cardElevation="4dp"
         app:cardMaxElevation="4dp"
-        app:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="?attr/colorCardBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,6 +44,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Mijn geweldige meme"
+                        android:textColor="?attr/colorTextMain"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -59,6 +61,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="XxX_Swag_Lord_420_XxX"
+                        android:textColor="?attr/colorTextSecondary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -69,6 +72,7 @@
                         android:gravity="center"
                         android:text="6 juni 1945"
                         android:textAlignment="viewEnd"
+                        android:textColor="?attr/colorTextSecondary"
                         android:textSize="15sp" />
 
                     <LinearLayout
@@ -100,7 +104,8 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="69"
-                                android:textAlignment="center" />
+                                android:textAlignment="center"
+                                android:textColor="?attr/colorTextSecondary" />
 
                             <ImageView
                                 android:id="@+id/card_downvote"

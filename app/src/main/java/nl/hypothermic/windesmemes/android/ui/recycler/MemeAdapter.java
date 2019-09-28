@@ -1,6 +1,5 @@
 package nl.hypothermic.windesmemes.android.ui.recycler;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -21,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -31,8 +28,6 @@ import nl.hypothermic.windesmemes.android.MainActivity;
 import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
-import nl.hypothermic.windesmemes.android.util.FakeLifecycleOwner;
-import nl.hypothermic.windesmemes.android.util.PicassoTargetAdapter;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
 
@@ -121,7 +116,8 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.title.setText(meme.title);
         holder.username.setText(meme.username);
         holder.date.setText(meme.date);
-        holder.vote.setText(meme.vote + "");
+        holder.vote.setText(meme.parseKarma() + meme.parseVote() + "");
+        LogWrapper.info(this, "KARMA: %s (%d) [%s]", meme.karma, meme.parseKarma() + meme.parseVote(), meme.vote);
 
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +129,11 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         View.OnClickListener upvoteListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.vote.setText((meme.vote + 1) + "");
-                LogWrapper.info(this, "TODO cast upvote to server");
+                if (!meme.vote.equals("1")) {
+                    meme.vote = "1";
+                    holder.vote.setText(((meme.parseKarma()) + 1) + "");
+                    LogWrapper.info(this, "TODO cast upvote to server");
+                }
             }
         };
         holder.vote.setOnClickListener(upvoteListener);
@@ -142,8 +141,11 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.vote.setText((meme.vote - 1) + "");
-                LogWrapper.info(this, "TODO cast downvote to server");
+                if (!meme.vote.equals("-1")) {
+                    meme.vote = "-1";
+                    holder.vote.setText(((meme.parseKarma()) - 1) + "");
+                    LogWrapper.info(this, "TODO cast downvote to server");
+                }
             }
         });
     }
