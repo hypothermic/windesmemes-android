@@ -91,7 +91,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                             final Drawable drawable = holder.meme.getDrawable();
 
                             if (drawable instanceof BitmapDrawable) {
-                                CachedAttributesDatabase.THREAD.execute(new Runnable() {
+                                CachedAttributesDatabase.IO_THREAD.execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -130,8 +130,6 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
             @Override
             public void onChanged(Vote vote) {
                 holder.vote.setText(meme.parseKarma() + vote.getWeight() + "");
-                LogWrapper.info(this, "KARMA: %s (%d) [%s]", meme.karma, meme.parseKarma() + meme.parseVote(), meme.vote);
-                LogWrapper.error(this, "TODO send cast vote result to server");
                 switch (vote) {
                     case UPVOTE:
                         holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_green_24dp));
@@ -145,6 +143,9 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_black_24dp));
                         holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_red_24dp));
                         break;
+                }
+                if (vote != Vote.NEUTRAL) {
+                    LogWrapper.error(this, "TODO send cast vote result to server");
                 }
             }
         };

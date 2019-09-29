@@ -12,8 +12,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Encapsulation of the session and user.
- *
+ * Encapsulation of the session and user.<br />
+ * <br />
  * Credentials are not supposed to leave this class.
  */
 public class AuthenticationContext {
@@ -68,10 +68,18 @@ public class AuthenticationContext {
         }
     }
 
+    /**
+     * Windesmemes does not have an API endpoint to verify if user tokens are valid, so only check if null.
+     */
     public boolean isUserAuthenticated() {
         return user != null && user.getUserToken() != null;
     }
 
+    /**
+     * Authenticates the user using the <i>username</i> and <i>password</i> passed into the function.<br />
+     * <br />
+     * If the user was already authenticated, this immediately returns true.
+     */
     public void userAuthenticate(final Observer<Boolean> onFinishedCallback, final String username, final String password) {
         if (isUserAuthenticated()) {
             onFinishedCallback.onChanged(true);
