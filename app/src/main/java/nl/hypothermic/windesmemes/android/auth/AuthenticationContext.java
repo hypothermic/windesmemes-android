@@ -3,6 +3,7 @@ package nl.hypothermic.windesmemes.android.auth;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
+import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.model.AuthenticationSession;
 import nl.hypothermic.windesmemes.model.AuthenticationUser;
@@ -87,11 +88,13 @@ public class AuthenticationContext {
             refreshSession(new Observer<Void>() {
                 @Override
                 public void onChanged(Void aVoid) {
-                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", "X").enqueue(new Callback<String>() {
+                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", BuildConfig.X_API_KEY, "session=" + session.getToken()).enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
+                            LogWrapper.error(this, "CALL---> %s", call.request().url().toString());
                             if (response.isSuccessful()) {
-                                WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, "TODO", "session=" + session.getToken()).enqueue(new Callback<Integer>() {
+                                LogWrapper.error(this, "----------> CSRF token: %s", response.body());
+                                WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, response.body(), "session=" + session.getToken()).enqueue(new Callback<Integer>() {
                                     @Override
                                     public void onResponse(Call<Integer> call, Response<Integer> response) {
                                         if (response.isSuccessful() && response.body() != null) {
@@ -144,19 +147,5 @@ public class AuthenticationContext {
                 }
             });
         }
-    }
-
-    private void getFormToken(String purpose) {
-        WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf(purpose, "X").enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
     }
 }

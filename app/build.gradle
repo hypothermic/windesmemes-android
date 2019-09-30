@@ -1,9 +1,13 @@
 apply plugin: 'com.android.application'
 
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(rootProject.file("api-key.skv")))
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "nl.hypothermic.windesmemes.android"
+        buildConfigField("String", "X_API_KEY", secretsProperties['X_API_KEY'])
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -39,6 +43,7 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
 
     implementation 'com.squareup.picasso:picasso:2.71828'
 

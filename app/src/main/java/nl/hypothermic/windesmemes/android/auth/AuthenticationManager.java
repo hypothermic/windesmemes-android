@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
 
 public class AuthenticationManager {

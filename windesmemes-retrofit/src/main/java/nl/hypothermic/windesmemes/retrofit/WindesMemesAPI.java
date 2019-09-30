@@ -1,5 +1,7 @@
 package nl.hypothermic.windesmemes.retrofit;
 
+import com.google.gson.stream.JsonReader;
+
 import java.io.IOException;
 import java.util.Locale;
 
@@ -9,6 +11,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class WindesMemesAPI {
 
@@ -50,7 +53,12 @@ public class WindesMemesAPI {
                     return chain.proceed(requestBuilder.build());
                 }
             });
-            RETROFIT = new Retrofit.Builder().baseUrl(API_URL).addConverterFactory(GsonConverterFactory.create()).client(httpClientBuilder.build()).build();
+            RETROFIT = new Retrofit.Builder()
+                    .baseUrl(API_URL)
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClientBuilder.build())
+                    .build();
         }
         return RETROFIT;
     }
