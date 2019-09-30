@@ -52,7 +52,7 @@ public class AuthenticationContext {
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
-                    LogWrapper.error(this, "TODO handle exception " + (t != null ? t.getMessage() : "NO MESSAGE"));
+                    LogWrapper.error(this, "TODO handle exception " + (t.getMessage() != null ? t.getMessage() : "NO MESSAGE"));
                 }
 
                 private void reportToCallback() {
@@ -87,41 +87,56 @@ public class AuthenticationContext {
             refreshSession(new Observer<Void>() {
                 @Override
                 public void onChanged(Void aVoid) {
-                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, "session=" + session.getToken()).enqueue(new Callback<Integer>() {
+                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", "X").enqueue(new Callback<String>() {
                         @Override
-                        public void onResponse(Call<Integer> call, Response<Integer> response) {
-                            if (response.isSuccessful() && response.body() != null) {
-                                int responseCode = response.body();
-                                switch (responseCode) {
-                                    case 900:
-                                        for (String header : response.headers().values("Set-Cookie")) {
-                                            if (header.startsWith("token=")) {
-                                                user.setUserToken(header.replace("token=", ""));
-                                                LogWrapper.info(this, "Token found in response: %s", header);
-                                                onFinishedCallback.onChanged(true);
-                                                return;
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.isSuccessful()) {
+                                WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, "TODO", "session=" + session.getToken()).enqueue(new Callback<Integer>() {
+                                    @Override
+                                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                                        if (response.isSuccessful() && response.body() != null) {
+                                            int responseCode = response.body();
+                                            switch (responseCode) {
+                                                case 900:
+                                                    for (String header : response.headers().values("Set-Cookie")) {
+                                                        if (header.startsWith("token=")) {
+                                                            user.setUserToken(header.replace("token=", ""));
+                                                            LogWrapper.info(this, "Token found in response: %s", header);
+                                                            onFinishedCallback.onChanged(true);
+                                                            return;
+                                                        }
+                                                    }
+                                                    LogWrapper.error(this, "TOOD handle token not found in response");
+                                                    break;
+                                                case 902:
+                                                    LogWrapper.error(this, "TODO invalid credentials");
+                                                    break;
+                                                case 903:
+                                                    LogWrapper.error(this, "TODO general error");
+                                                    break;
+                                                default:
+                                                    LogWrapper.error(this, "TODO invalid response code %d", responseCode);
+                                                    break;
                                             }
+                                            onFailure(call, new Exception("Error code, see logcat")); // TODO
+                                        } else {
+                                            onFailure(call, new Exception("Response not successful"));
                                         }
-                                        LogWrapper.error(this, "TOOD handle token not found in response");
-                                        break;
-                                    case 902:
-                                        LogWrapper.error(this, "TODO invalid credentials");
-                                        break;
-                                    case 903:
-                                        LogWrapper.error(this, "TODO general error");
-                                        break;
-                                    default:
-                                        LogWrapper.error(this, "TODO invalid response code %d", responseCode);
-                                        break;
-                                }
-                                onFailure(call, new Exception("Error code, see logcat")); // TODO
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Integer> call, Throwable t) {
+                                        LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
+                                        onFinishedCallback.onChanged(false);
+                                    }
+                                });
                             } else {
-                                onFailure(call, new Exception("Response not successful"));
+                                onFailure(call, new Exception("TODO response not successful"));
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<Integer> call, Throwable t) {
+                        public void onFailure(Call<String> call, Throwable t) {
                             LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
                             onFinishedCallback.onChanged(false);
                         }
@@ -129,5 +144,19 @@ public class AuthenticationContext {
                 }
             });
         }
+    }
+
+    private void getFormToken(String purpose) {
+        WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf(purpose, "X").enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 }
