@@ -1,6 +1,5 @@
 package nl.hypothermic.windesmemes.android.ui.recycler;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,17 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -31,9 +29,8 @@ import nl.hypothermic.windesmemes.android.MainActivity;
 import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
-import nl.hypothermic.windesmemes.android.util.FakeLifecycleOwner;
-import nl.hypothermic.windesmemes.android.util.PicassoTargetAdapter;
 import nl.hypothermic.windesmemes.model.Meme;
+import nl.hypothermic.windesmemes.model.Vote;
 import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
 
 public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
@@ -68,7 +65,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
         holder.meme.setLayoutParams(layoutParams);
 
-        // If local cache database contains meme image, load from there. Otherwise, request it via the API.
+        // If local cache database contains meme image, load from cache. Otherwise, request it via the API.
         final LiveData<MemeCachedAttributes> liveData = CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao().get(meme.imageUrl);
         liveData.observe(((MainActivity) ctx), new Observer<MemeCachedAttributes>() {
             @Override
@@ -94,7 +91,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                             final Drawable drawable = holder.meme.getDrawable();
 
                             if (drawable instanceof BitmapDrawable) {
-                                CachedAttributesDatabase.THREAD.execute(new Runnable() {
+                                CachedAttributesDatabase.IO_THREAD.execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -128,11 +125,53 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                 LogWrapper.error(this, "TODO show user profile");
             }
         });
+
+        final Observer<Vote> voteObserver = new Observer<Vote>() {
+            @Override
+            public void onChanged(Vote vote) {
+                holder.vote.setText(meme.parseKarma() + vote.getWeight() + "");
+                switch (vote) {
+                    case UPVOTE:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_green_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_black_24dp));
+                        break;
+                    case NEUTRAL:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_black_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_black_24dp));
+                        break;
+                    case DOWNVOTE:
+                        holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_black_24dp));
+                        holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_red_24dp));
+                        break;
+                }
+                if (vote != Vote.NEUTRAL) {
+                    LogWrapper.error(this, "TODO send cast vote result to server");
+                }
+            }
+        };
+
+        // Trigger initial
+        voteObserver.onChanged(Vote.fromIndex(meme.parseVote()));
+
+        // Trigger on user input
+        View.OnClickListener upvoteListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                voteObserver.onChanged(Vote.UPVOTE);
+            }
+        };
+        holder.vote.setOnClickListener(upvoteListener);
+        holder.upvote.setOnClickListener(upvoteListener);
+        holder.downvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                voteObserver.onChanged(Vote.DOWNVOTE);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return memes.size();
     }
-
 }

@@ -15,6 +15,11 @@ public abstract class ComplexDataViewModel<T, E> extends ViewModel {
         return cachedData;
     }
 
+    public ComplexDataViewModel<T, E> clearCache() {
+        cachedData = null;
+        return this;
+    }
+
     protected abstract MutableLiveData<T> loadData(E enumeration);
 
 }

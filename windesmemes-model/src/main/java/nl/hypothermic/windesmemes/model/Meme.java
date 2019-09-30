@@ -14,10 +14,10 @@ public class Meme {
     public long userId;
 
     @SerializedName("karma")
-    public int userKarma; // zal nooit een 'long' worden
+    public String karma;
 
     @SerializedName("vote")
-    public int vote;
+    public String vote;
 
     @SerializedName("flair")
     public String flair; // TODO data type????
@@ -31,4 +31,26 @@ public class Meme {
     @SerializedName("date")
     public String date; // TODO format
 
+    @Override
+    public String toString() {
+        return "Meme [" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", userId=" + userId +
+                ", karma=" + karma +
+                ", vote=" + vote +
+                ", flair='" + flair + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                "]";
+    }
+
+    public int parseKarma() {
+        return Integer.valueOf(karma);
+    }
+
+    public int parseVote() {
+        return Integer.valueOf(vote);
+    }
 }

@@ -13,24 +13,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ContentRepository {
+public class MemeRepository {
 
-    private static ContentRepository INSTANCE;
+    private static MemeRepository INSTANCE;
 
-    public static ContentRepository getInstance() {
+    public static MemeRepository getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ContentRepository();
+            INSTANCE = new MemeRepository();
         }
         return INSTANCE;
     }
 
-    private ContentRepository() {
+    private MemeRepository() {
 
     }
 
     public MutableLiveData<List<Meme>> getMemes(int count, int start, MemeMode mode) {
         final MutableLiveData<List<Meme>> memeData = new MutableLiveData<>();
-        WindesMemesAPI.getInstance().getContentEndpoint().getMemes(10, 0, mode.getAsString()).enqueue(new Callback<List<Meme>>() {
+        WindesMemesAPI.getInstance().getContentEndpoint().getMemes(count, start, mode.getAsString()).enqueue(new Callback<List<Meme>>() {
             @Override
             public void onResponse(Call<List<Meme>> call, Response<List<Meme>> response) {
                 if (response.isSuccessful()) {

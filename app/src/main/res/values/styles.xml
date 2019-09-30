@@ -1,23 +1,25 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorCardBackground">@color/colorBackground</item>
+        <item name="colorFragBackground">@color/colorFragmentBackground</item>
+        <item name="colorTextMain">@color/colorText</item>
+        <item name="colorTextSecondary">@color/colorTextSecondary</item>
+        <item name="colorIconMain">@color/colorBackground</item>
     </style>
 
-    <!--<style name="AppTheme" parent="AppTheme.LIGHT" />-->
-
-    <!--<style name="AppTheme.LIGHT" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.DARK" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>-->
-
-    <style name="AppTheme.DARK" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorCardBackground">@color/colorBackgroundDark</item>
+        <item name="colorFragBackground">@color/colorFragmentBackgroundDark</item>
+        <item name="colorTextMain">@color/colorTextDark</item>
+        <item name="colorTextSecondary">@color/colorTextSecondaryDark</item>
+        <item name="colorIconMain">@color/colorBackgroundDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

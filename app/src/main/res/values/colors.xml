@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Normal Theme -->
     <color name="colorPrimary">#272727</color>
+    <color name="colorPrimaryFade">#202020</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF7000</color>
-    <color name="colorBackground">#DADADA</color>
+    <color name="colorText">#4D4D4D</color>
+    <color name="colorTextSecondary">#646464</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorFragmentBackground">#DADADA</color>
+    <color name="colorError">#FF2600</color>
+
+    <!-- Dark Theme -->
+    <color name="colorBackgroundDark">#141414</color>
+    <color name="colorFragmentBackgroundDark">#363636</color>
+    <color name="colorTextDark">#FFFFFF</color>
+    <color name="colorTextSecondaryDark">#DFDFDF</color>
 </resources>

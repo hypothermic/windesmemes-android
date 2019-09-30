@@ -13,10 +13,10 @@ import java.util.concurrent.ThreadFactory;
 @Database(entities = { MemeCachedAttributes.class }, version = 4, exportSchema = false)
 public abstract class CachedAttributesDatabase extends RoomDatabase {
 
-    public static final Executor THREAD = Executors.newSingleThreadExecutor(new ThreadFactory() {
+    public static final Executor IO_THREAD = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable runnable) {
-            return new Thread(runnable, "WM Database Thread");
+            return new Thread(runnable, "WM Database Input/Output Thread");
         }
     });
 
@@ -26,7 +26,9 @@ public abstract class CachedAttributesDatabase extends RoomDatabase {
     public static CachedAttributesDatabase getInstance(Context context) {
         synchronized (LOCK) {
             if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context, CachedAttributesDatabase.class, "cache.db").build();
+                INSTANCE = Room.databaseBuilder(context, CachedAttributesDatabase.class, "cache.db")
+                                   .fallbackToDestructiveMigration()
+                                   .build();
             }
             return INSTANCE;
         }

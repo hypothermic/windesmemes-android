@@ -9,13 +9,8 @@ import nl.hypothermic.windesmemes.model.MemeMode;
 
 public class MemeViewModel extends ComplexDataViewModel<List<Meme>, MemeMode> {
 
-    /*@Override
-    protected MutableLiveData<List<Meme>> loadData() {
-        return ContentRepository.getInstance().getMemes(10, 0, MemeMode.FRESH); // TODO un-hardcode
-    }*/
-
     @Override
     protected MutableLiveData<List<Meme>> loadData(MemeMode enumeration) {
-        return ContentRepository.getInstance().getMemes(10, 0, enumeration);
+        return MemeRepository.getInstance().getMemes(10, 0, enumeration); // TODO un-hardcode count, start
     }
 }

@@ -7,10 +7,18 @@
     <string name="message_refresh">Herladen…</string>
     <string name="message_refreshed">Herladen successvol.</string>
 
+    <string name="actionbar_title_format">Windesmemes - %s</string>
+    <string name="mode_fresh">Fresh</string>
+    <string name="mode_hot">Hot</string>
+    <string name="mode_trending">Trending</string>
+    <string name="mode_best">Best</string>
+
     <string name="login_activity_name">Inloggen met Windesmemes account</string>
     <string name="login_field_username_hint">Username</string>
     <string name="login_field_password_hint">Password</string>
+    <string name="login_error_invalid_input">Invalid input!</string>
+    <string name="login_error_generic">Error while authenticating!</string>
     <string name="login_interactable_submit_text">Inloggen</string>
     <string name="login_interactable_policy_wm_text">Windesmemes Privacy Policy</string>
-    <string name="login_interactable_policy_ht_text">Hypothermic Privacy Statement</string>
+    <string name="login_interactable_policy_ht">Hypothermic Privacy Statement</string>
 </resources>
