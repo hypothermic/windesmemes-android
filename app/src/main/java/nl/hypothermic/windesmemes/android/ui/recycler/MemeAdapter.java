@@ -1,5 +1,6 @@
 package nl.hypothermic.windesmemes.android.ui.recycler;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +28,7 @@ import java.util.List;
 import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.android.MainActivity;
 import nl.hypothermic.windesmemes.android.R;
+import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
 import nl.hypothermic.windesmemes.model.Meme;
@@ -127,6 +129,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         });
 
         final Observer<Vote> voteObserver = new Observer<Vote>() {
+            @SuppressLint("SetTextI18n") /* Geen internationalization omdat het een getal is */
             @Override
             public void onChanged(Vote vote) {
                 holder.vote.setText(meme.parseKarma() + vote.getWeight() + "");
@@ -145,7 +148,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         break;
                 }
                 if (vote != Vote.NEUTRAL) {
-                    LogWrapper.error(this, "TODO send cast vote result to server");
+                    AuthenticationManager.acquire(ctx).vote(vote, meme.id, null);
                 }
             }
         };

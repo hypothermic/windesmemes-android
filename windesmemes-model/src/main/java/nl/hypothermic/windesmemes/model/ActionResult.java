@@ -18,4 +18,11 @@ public class ActionResult {
     public void setError(String error) {
         this.error = error;
     }
+
+    @Override
+    public String toString() {
+        return "ActionResult [" +
+                "error='" + error + '\'' +
+                "]";
+    }
 }

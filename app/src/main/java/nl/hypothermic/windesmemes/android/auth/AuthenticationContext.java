@@ -155,7 +155,7 @@ public class AuthenticationContext {
         }
     }
 
-    public void vote(final Vote vote, final int memeId, @Nullable final Observer<Void> onFinishedCallback) {
+    public void vote(final Vote vote, final long memeId, @Nullable final Observer<Void> onFinishedCallback) {
         if (isUserAuthenticated()) {
             refreshSession(new Observer<Void>() {
                 @Override
