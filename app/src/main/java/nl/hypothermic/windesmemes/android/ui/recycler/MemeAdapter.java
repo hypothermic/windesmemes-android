@@ -75,7 +75,6 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         liveData.observe(((MainActivity) ctx), new Observer<MemeCachedAttributes>() {
             @Override
             public void onChanged(MemeCachedAttributes memeCachedAttributes) {
-                LogWrapper.info(this, "Queried cache for attribute %s", meme.imageUrl);
                 liveData.removeObserver(this);
                 if (memeCachedAttributes != null) {
                     // Load meme from database result
@@ -85,7 +84,6 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                     if (decompressed == null) {
                         LogWrapper.error(this, "Error while decompressing image. TODO show error message and return"); // TODO
                     }
-                    LogWrapper.info(this, "Loaded meme from cache %s", meme.imageUrl);
                     holder.meme.setImageBitmap(decompressed);
                 } else {
                     // Retrieve meme from API.
@@ -103,7 +101,6 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                                         ((BitmapDrawable) drawable).getBitmap().compress(Bitmap.CompressFormat.PNG, 80, outputStream);
                                         CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao()
                                                 .save(new MemeCachedAttributes(meme.imageUrl, outputStream.toByteArray()));
-                                        LogWrapper.info(this, "Loaded meme from API %s", meme.imageUrl);
                                     }
                                 });
                             } else {

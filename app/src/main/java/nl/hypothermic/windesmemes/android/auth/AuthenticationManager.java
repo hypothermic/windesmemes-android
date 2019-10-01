@@ -24,7 +24,7 @@ public class AuthenticationManager {
         }
 
         // TODO verify that MainActivity appContext == LoginActivity appContext
-        LogWrapper.info(appContext, "CONTEXT MAPPING SIZE: %d", CONTEXT_MAPPING.size());
+        //LogWrapper.info(appContext, "CONTEXT MAPPING SIZE: %d", CONTEXT_MAPPING.size());
 
         // if app context exists in mapping, return related auth context
         for (Map.Entry<WeakReference<Context>, AuthenticationContext> entry : CONTEXT_MAPPING.entrySet()) {
@@ -35,7 +35,7 @@ public class AuthenticationManager {
         }
 
         // else create new auth context and store in mapping for future use.
-        AuthenticationContext authContext = new AuthenticationContext();
+        AuthenticationContext authContext = AuthenticationContext.fromAndroidContext(appContext);
         CONTEXT_MAPPING.put(new WeakReference<>(appContext), authContext);
         return authContext;
     }

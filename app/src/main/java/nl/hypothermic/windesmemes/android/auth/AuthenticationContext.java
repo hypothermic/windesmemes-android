@@ -1,8 +1,10 @@
 package nl.hypothermic.windesmemes.android.auth;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.lifecycle.Observer;
 
 import nl.hypothermic.windesmemes.android.BuildConfig;
@@ -27,8 +29,44 @@ import retrofit2.Response;
 
 public class AuthenticationContext {
 
+    private static final String SHARED_PREFERENCES_KEY = "nl.hypothermic.windesmemes.WM.AUTH_PREFS";
+    private static final String PREFS_KEY_USER    = "user_token";
+    private static final String PREFS_KEY_EXPIRES = "expires";
+
+    private static final long   EXPIRES_AFTER     = 518400000L; // ms
+
+    /**
+     * If there was a user token stored in the shared prefs AND it was used within last 6 days, use it.<br />
+     * <br />
+     * Otherwise, clear fields mentioned above ^
+     */
+    // TODO doe dit async
+    public static AuthenticationContext fromAndroidContext(Context appContext) {
+        AuthenticationContext context = new AuthenticationContext(appContext);
+        SharedPreferences preferences = appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+
+        String result = preferences.getString(PREFS_KEY_USER, "");
+        long modified = preferences.getLong(PREFS_KEY_EXPIRES, 0L);
+        long time     = System.currentTimeMillis();
+
+        if (result != null && result.length() == 128 && modified <= time - EXPIRES_AFTER) {
+            context.user.setUserToken(result);
+            preferences.edit().putLong(PREFS_KEY_EXPIRES, time).apply();
+        } else {
+            preferences.edit().putString(PREFS_KEY_USER, "").putLong(PREFS_KEY_EXPIRES, 0L).apply();
+        }
+
+        return context;
+    }
+
     private final AuthenticationSession session = new AuthenticationSession();
     private volatile AuthenticationUser user;
+
+    private final Context appContext;
+
+    private AuthenticationContext(Context appContext) {
+        this.appContext = appContext;
+    }
 
     /**
      * If session is invalid, this method gets a new session token and stores it in <i>session</i>.<br />
@@ -51,7 +89,11 @@ public class AuthenticationContext {
                                 if (cookie.contains(";")) {
                                     cookie = cookie.substring(0, cookie.indexOf(";"));
                                 }
+
+                                LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
+                                        call.request().url(), call.request().header("Cookie"), cookie.substring(cookie.indexOf("=") + 1));
                                 session.setToken(cookie.substring(cookie.indexOf("=") + 1));
+                                reportToCallback();
                                 return;
                             }
                         }
@@ -62,6 +104,7 @@ public class AuthenticationContext {
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
                     LogWrapper.error(this, "TODO handle exception " + (t.getMessage() != null ? t.getMessage() : "NO MESSAGE"));
+                    reportToCallback();
                 }
 
                 private void reportToCallback() {
@@ -99,20 +142,24 @@ public class AuthenticationContext {
                     WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", BuildConfig.X_API_KEY, "session=" + session.getToken()).enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
-                            LogWrapper.error(this, "CALL---> %s", call.request().url().toString());
                             if (response.isSuccessful()) {
-                                LogWrapper.error(this, "----------> CSRF token: %s", response.body());
                                 WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, response.body(), "session=" + session.getToken()).enqueue(new Callback<Integer>() {
                                     @Override
                                     public void onResponse(Call<Integer> call, Response<Integer> response) {
                                         if (response.isSuccessful() && response.body() != null) {
+                                            LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
+                                                    call.request().url(), call.request().header("Cookie"), response.body());
                                             int responseCode = response.body();
                                             switch (responseCode) {
                                                 case 900:
+                                                    // TODO clean up this mess + support multiple users
                                                     for (String header : response.headers().values("Set-Cookie")) {
                                                         if (header.startsWith("token=")) {
-                                                            user.setUserToken(header.replace("token=", ""));
-                                                            LogWrapper.info(this, "Token found in response: %s", header);
+                                                            if (user == null) {
+                                                                user = new AuthenticationUser();
+                                                            }
+                                                            String replaced = header.replace("token=", "");
+                                                            user.setUserToken(replaced.substring(0, replaced.indexOf(";")));
                                                             onFinishedCallback.onChanged(true);
                                                             return;
                                                         }
@@ -175,11 +222,12 @@ public class AuthenticationContext {
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
                                 WindesMemesAPI.getInstance().getRatingsEndpoint().vote(vote.getWeight(), memeId, response.body(),
-                                        "Cookie: sessionid=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<ActionResult>() {
+                                        "session=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<ActionResult>() {
                                     @Override
                                     public void onResponse(Call<ActionResult> call, Response<ActionResult> response) {
-                                        if (response.isSuccessful() && response.body() != null) {
-                                            LogWrapper.error(this, "TODO response: %s", response.body().toString());
+                                        if (response.isSuccessful() && response.body() != null && response.body().error.equals("ok")) {
+                                            LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
+                                                    call.request().url(), call.request().header("Cookie"), response.body());
                                             onFinishedCallback.onChanged(null);
                                         } else {
                                             onFailure(call, new Exception("TODO response not successful"));
