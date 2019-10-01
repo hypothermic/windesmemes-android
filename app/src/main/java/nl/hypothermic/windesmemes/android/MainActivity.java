@@ -34,6 +34,7 @@ import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.MemeViewModel;
 import nl.hypothermic.windesmemes.android.ui.ActivityTheme;
 import nl.hypothermic.windesmemes.android.ui.I18NMappings;
+import nl.hypothermic.windesmemes.android.ui.recycler.InfiniteScrollListener;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.MemeMode;
@@ -51,13 +52,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private volatile MemeMode lastMode;
 
     public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode) {
-        refreshMemes(activity, cardView, model, mode, null);
+        refreshMemes(activity, cardView, model, mode, null, 0);
     }
 
-    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, final MemeViewModel model, final MemeMode mode, final Consumer<Void> callback) {
-        model.clearCache().getData(mode).observe(activity, new Observer<List<Meme>>() {
+    public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, final MemeViewModel model,
+                                    final MemeMode mode, final Consumer<Void> callback, int start) {
+        model.clearCache().getData(mode, start).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
+                LogWrapper.error(this, "LOADED %d MEMES", memes.size());
                 cardView.setAdapter(new MemeAdapter(memes, activity, cardView));
                 ActionBar supportActionBar = activity.getSupportActionBar();
                 if (supportActionBar != null) {
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void accept(Void ignore) {
                         Snackbar.make(view, getString(R.string.message_refreshed), Snackbar.LENGTH_LONG).show();
                     }
-                });
+                }, 0);
             }
         });
 
@@ -115,14 +118,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 } else {
                     // TODO show user options??
+                    Snackbar.make(v, getString(R.string.login_error_success), Snackbar.LENGTH_LONG).show();
                 }
             }
         });
 
-        cardView = findViewById(R.id.main_cards); // TODO butterknife or view binding (studio canary 11+)
-        cardView.setLayoutManager(new LinearLayoutManager(this));
-
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
+
+        cardView = findViewById(R.id.main_cards); // TODO butterknife or view binding (studio canary 11+)
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        cardView.setLayoutManager(layoutManager);
+        cardView.addOnScrollListener(new InfiniteScrollListener(cardView, layoutManager, new Observer<InfiniteScrollListener.ObserverData<Void>>() {
+            @Override
+            public void onChanged(final InfiniteScrollListener.ObserverData<Void> observerData) {
+                LogWrapper.error(this, "TOTAL ITEMS: %d", observerData.getTotalItemCount());
+                refreshMemes(MainActivity.this, cardView, viewModel, lastMode, new Consumer<Void>() {
+                    @Override
+                    public void accept(Void aVoid) {
+                        observerData.getOnLoadingDoneCallback().onChanged(null);
+                    }
+                }, observerData.getTotalItemCount());
+            }
+        }));
+
 
         AuthenticationManager.acquire(this.getApplicationContext()).refreshSession(null);
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));

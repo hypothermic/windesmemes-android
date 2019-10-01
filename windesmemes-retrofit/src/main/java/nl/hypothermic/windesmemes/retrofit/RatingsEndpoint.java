@@ -9,6 +9,6 @@ import retrofit2.http.Query;
 public interface RatingsEndpoint {
 
     @GET("vote")
-    Call<ActionResult> vote(@Query("vote") int voteValue, @Query("meme_id") long memeId, @Query("form_token") String formToken, @Header("Cookie") String cookies);
+    Call<ActionResult> vote(@Query("value") int voteValue, @Query("meme_id") long memeId, @Query("form_token") String formToken, @Header("Cookie") String cookies);
 
 }

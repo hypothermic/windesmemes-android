@@ -8,9 +8,9 @@ public abstract class ComplexDataViewModel<T, E> extends ViewModel {
 
     private MutableLiveData<T> cachedData;
 
-    public LiveData<T> getData(E enumeration) {
+    public LiveData<T> getData(E enumeration, int start) {
         if (cachedData == null) {
-            cachedData = loadData(enumeration);
+            cachedData = loadData(enumeration, start);
         }
         return cachedData;
     }
@@ -20,6 +20,6 @@ public abstract class ComplexDataViewModel<T, E> extends ViewModel {
         return this;
     }
 
-    protected abstract MutableLiveData<T> loadData(E enumeration);
+    protected abstract MutableLiveData<T> loadData(E enumeration, int start);
 
 }

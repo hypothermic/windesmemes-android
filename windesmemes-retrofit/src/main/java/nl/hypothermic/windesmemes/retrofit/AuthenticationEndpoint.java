@@ -22,6 +22,6 @@ public interface AuthenticationEndpoint {
                                @Field("form_token") String formToken, @Header("Cookie") String sessionCookie);
 
     @GET("generate_csrf")
-    Call<String> generateCsrf(@Query("for") String purpose, @Query("api-key") String apiKey, @Header("Cookie") String sessionCookie);
+    Call<String> generateCsrf(@Query("for") String purpose, @Query("api_key") String apiKey, @Header("Cookie") String sessionCookie);
 
 }

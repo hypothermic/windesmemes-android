@@ -49,7 +49,7 @@ public class AuthenticationContext {
         long modified = preferences.getLong(PREFS_KEY_EXPIRES, 0L);
         long time     = System.currentTimeMillis();
 
-        if (result != null && result.length() == 128 && modified <= time - EXPIRES_AFTER) {
+        if (result != null && result.length() == 128 && modified >= time - EXPIRES_AFTER) {
             context.user.setUserToken(result);
             preferences.edit().putLong(PREFS_KEY_EXPIRES, time).apply();
         } else {
@@ -60,7 +60,7 @@ public class AuthenticationContext {
     }
 
     private final AuthenticationSession session = new AuthenticationSession();
-    private volatile AuthenticationUser user;
+    private volatile AuthenticationUser user = new AuthenticationUser();
 
     private final Context appContext;
 
@@ -155,12 +155,17 @@ public class AuthenticationContext {
                                                     // TODO clean up this mess + support multiple users
                                                     for (String header : response.headers().values("Set-Cookie")) {
                                                         if (header.startsWith("token=")) {
-                                                            if (user == null) {
-                                                                user = new AuthenticationUser();
-                                                            }
                                                             String replaced = header.replace("token=", "");
-                                                            user.setUserToken(replaced.substring(0, replaced.indexOf(";")));
+                                                            String formatted = replaced.substring(0, replaced.indexOf(";"));
+
+                                                            user.setUserToken(formatted);
                                                             onFinishedCallback.onChanged(true);
+
+                                                            appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                                                                    .edit()
+                                                                    .putString(PREFS_KEY_USER, formatted)
+                                                                    .putLong(PREFS_KEY_EXPIRES, System.currentTimeMillis())
+                                                                    .apply();
                                                             return;
                                                         }
                                                     }
