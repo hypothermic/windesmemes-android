@@ -13,6 +13,6 @@ public class MemeViewModel extends ComplexDataViewModel<List<Meme>, MemeMode> {
 
     @Override
     protected MutableLiveData<List<Meme>> loadData(MemeMode enumeration, int start) {
-        return MemeRepository.getInstance().getMemes(start + DEFAULT_SIZE, start, enumeration);
+        return MemeRepository.getInstance().getMemes(DEFAULT_SIZE, start, enumeration);
     }
 }

@@ -52,16 +52,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private volatile MemeMode lastMode;
 
     public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, MemeViewModel model, MemeMode mode) {
-        refreshMemes(activity, cardView, model, mode, null, 0);
+        refreshMemes(activity, cardView, model, mode, null, 0, false);
     }
 
     public static void refreshMemes(final MainActivity activity, final RecyclerView cardView, final MemeViewModel model,
-                                    final MemeMode mode, final Consumer<Void> callback, int start) {
+                                    final MemeMode mode, final Consumer<Void> callback, int start, final boolean append) {
         model.clearCache().getData(mode, start).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
                 LogWrapper.error(this, "LOADED %d MEMES", memes.size());
-                cardView.setAdapter(new MemeAdapter(memes, activity, cardView));
+                if (append) {
+                    MemeAdapter adapter = (MemeAdapter) cardView.getAdapter();
+                    if (adapter != null) {
+                        adapter.getMemes().addAll(memes);
+                        // TODO mAdapter.notifyItemRangeInserted for better performance
+                        adapter.notifyDataSetChanged();
+                    }
+                } else {
+                    cardView.setAdapter(new MemeAdapter(memes, activity, cardView));
+                }
                 ActionBar supportActionBar = activity.getSupportActionBar();
                 if (supportActionBar != null) {
                     supportActionBar.setTitle(String.format(activity.getString(R.string.actionbar_title_format), activity.getString(I18NMappings.getModeResource(mode))));
@@ -94,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void accept(Void ignore) {
                         Snackbar.make(view, getString(R.string.message_refreshed), Snackbar.LENGTH_LONG).show();
                     }
-                }, 0);
+                }, 0, false);
             }
         });
 
@@ -137,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void accept(Void aVoid) {
                         observerData.getOnLoadingDoneCallback().onChanged(null);
                     }
-                }, observerData.getTotalItemCount());
+                }, observerData.getTotalItemCount(), true);
             }
         }));
 
