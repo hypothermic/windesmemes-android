@@ -1,12 +1,15 @@
 package nl.hypothermic.windesmemes.android.auth;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
 import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
+import nl.hypothermic.windesmemes.model.ActionResult;
 import nl.hypothermic.windesmemes.model.AuthenticationSession;
 import nl.hypothermic.windesmemes.model.AuthenticationUser;
+import nl.hypothermic.windesmemes.model.Vote;
 import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,6 +20,9 @@ import retrofit2.Response;
  * <br />
  * Credentials are not supposed to leave this class.
  */
+
+//=========== BE CAREFUL: CALLBACK HELL UP AHEAD!!! UNREADABLE CODE INCOMING!!! ================//
+
 public class AuthenticationContext {
 
     private final AuthenticationSession session = new AuthenticationSession();
@@ -142,6 +148,53 @@ public class AuthenticationContext {
                         public void onFailure(Call<String> call, Throwable t) {
                             LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
                             onFinishedCallback.onChanged(false);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    public void vote(final Vote vote, final int memeId, @Nullable final Observer<Void> onFinishedCallback) {
+        if (isUserAuthenticated()) {
+            refreshSession(new Observer<Void>() {
+                @Override
+                public void onChanged(Void aVoid) {
+                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf(
+                            "vote", BuildConfig.X_API_KEY, "session=" + session.getToken()).enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.isSuccessful()) {
+                                WindesMemesAPI.getInstance().getRatingsEndpoint().vote(vote.getWeight(), memeId, response.body(),
+                                        "Cookie: sessionid=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<ActionResult>() {
+                                    @Override
+                                    public void onResponse(Call<ActionResult> call, Response<ActionResult> response) {
+                                        if (response.isSuccessful() && response.body() != null) {
+                                            LogWrapper.error(this, "TODO response: %s", response.body().toString());
+                                        } else {
+                                            onFailure(call, new Exception("TODO response not successful"));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ActionResult> call, Throwable t) {
+                                        LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
+                                        if (onFinishedCallback != null) {
+                                            onFinishedCallback.onChanged(null);
+                                        }
+                                    }
+                                });
+                            } else {
+                                onFailure(call, new Exception("TODO response not successful"));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, @NonNull Throwable t) {
+                            LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
+                            if (onFinishedCallback != null) {
+                                onFinishedCallback.onChanged(null);
+                            }
                         }
                     });
                 }

@@ -32,12 +32,14 @@ public class WindesMemesAPI {
         return INSTANCE;
     }
 
-    private final ContentEndpoint contentEndpoint;
     private final AuthenticationEndpoint authenticationEndpoint;
+    private final ContentEndpoint contentEndpoint;
+    private final RatingsEndpoint ratingsEndpoint;
 
     private WindesMemesAPI() {
-        contentEndpoint = getRetrofit().create(ContentEndpoint.class);
         authenticationEndpoint = getRetrofit().create(AuthenticationEndpoint.class);
+        contentEndpoint = getRetrofit().create(ContentEndpoint.class);
+        ratingsEndpoint = getRetrofit().create(RatingsEndpoint.class);
     }
 
     private Retrofit getRetrofit() {
@@ -69,5 +71,9 @@ public class WindesMemesAPI {
 
     public AuthenticationEndpoint getAuthenticationEndpoint() {
         return authenticationEndpoint;
+    }
+
+    public RatingsEndpoint getRatingsEndpoint() {
+        return ratingsEndpoint;
     }
 }
