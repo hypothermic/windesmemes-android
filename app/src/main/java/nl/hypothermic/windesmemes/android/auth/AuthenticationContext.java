@@ -2,10 +2,12 @@ package nl.hypothermic.windesmemes.android.auth;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.Observer;
 
 import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
+import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.model.ActionResult;
 import nl.hypothermic.windesmemes.model.AuthenticationSession;
 import nl.hypothermic.windesmemes.model.AuthenticationUser;
@@ -34,7 +36,7 @@ public class AuthenticationContext {
      * This method is also great for warming up the cache.<br />
      * <br />
      * The observer is called from the current thread if the token was cached,
-     *      else it will be called from a Retrofit thread.
+     * else it will be called from a Retrofit thread.
      *
      * @param onFinishedCallback Nullable. Returns when completed.
      */
@@ -155,8 +157,15 @@ public class AuthenticationContext {
         }
     }
 
-    public void vote(final Vote vote, final long memeId, @Nullable final Observer<Void> onFinishedCallback) {
-        if (isUserAuthenticated()) {
+    /**
+     * Votes on a meme.<br />
+     * <br />
+     * Returns a StringRes integer in the callback.
+     */
+    public void vote(final Vote vote, final long memeId, @NonNull final Observer<Integer> onFinishedCallback) {
+        if (!isUserAuthenticated()) {
+            onFinishedCallback.onChanged(R.string.login_error_not_authed);
+        } else {
             refreshSession(new Observer<Void>() {
                 @Override
                 public void onChanged(Void aVoid) {
@@ -171,6 +180,7 @@ public class AuthenticationContext {
                                     public void onResponse(Call<ActionResult> call, Response<ActionResult> response) {
                                         if (response.isSuccessful() && response.body() != null) {
                                             LogWrapper.error(this, "TODO response: %s", response.body().toString());
+                                            onFinishedCallback.onChanged(null);
                                         } else {
                                             onFailure(call, new Exception("TODO response not successful"));
                                         }
@@ -179,9 +189,7 @@ public class AuthenticationContext {
                                     @Override
                                     public void onFailure(Call<ActionResult> call, Throwable t) {
                                         LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
-                                        if (onFinishedCallback != null) {
-                                            onFinishedCallback.onChanged(null);
-                                        }
+                                        onFinishedCallback.onChanged(R.string.login_error_generic);
                                     }
                                 });
                             } else {
@@ -192,9 +200,7 @@ public class AuthenticationContext {
                         @Override
                         public void onFailure(Call<String> call, @NonNull Throwable t) {
                             LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
-                            if (onFinishedCallback != null) {
-                                onFinishedCallback.onChanged(null);
-                            }
+                            onFinishedCallback.onChanged(R.string.login_error_generic);
                         }
                     });
                 }

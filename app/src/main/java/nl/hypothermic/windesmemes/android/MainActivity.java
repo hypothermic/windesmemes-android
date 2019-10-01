@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         model.clearCache().getData(mode).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
-                cardView.setAdapter(new MemeAdapter(memes, activity));
+                cardView.setAdapter(new MemeAdapter(memes, activity, cardView));
                 ActionBar supportActionBar = activity.getSupportActionBar();
                 if (supportActionBar != null) {
                     supportActionBar.setTitle(String.format(activity.getString(R.string.actionbar_title_format), activity.getString(I18NMappings.getModeResource(mode))));

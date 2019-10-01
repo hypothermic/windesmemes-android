@@ -18,6 +18,8 @@
     <string name="login_field_password_hint">Password</string>
     <string name="login_error_invalid_input">Invalid input!</string>
     <string name="login_error_generic">Error while authenticating!</string>
+    <string name="login_error_not_authed">Please log in before using this feature.</string>
+    <string name="login_error_success">You are now logged in!</string>
     <string name="login_interactable_submit_text">Inloggen</string>
     <string name="login_interactable_policy_wm_text">Windesmemes Privacy Policy</string>
     <string name="login_interactable_policy_ht">Hypothermic Privacy Statement</string>

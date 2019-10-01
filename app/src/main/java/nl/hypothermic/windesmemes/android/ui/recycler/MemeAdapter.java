@@ -19,6 +19,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -39,10 +40,12 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
 
     private List<Meme> memes;
     private Context ctx;
+    private View view;
 
-    public MemeAdapter(List<Meme> memes, Context ctx) {
+    public MemeAdapter(List<Meme> memes, Context ctx, View view) {
         this.memes = memes;
         this.ctx = ctx;
+        this.view = view;
     }
 
     @NonNull
@@ -148,7 +151,14 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         break;
                 }
                 if (vote != Vote.NEUTRAL) {
-                    AuthenticationManager.acquire(ctx).vote(vote, meme.id, null);
+                    AuthenticationManager.acquire(ctx).vote(vote, meme.id, new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer integer) {
+                            if (integer != null) {
+                                Snackbar.make(view, ctx.getString(integer), Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 }
             }
         };
