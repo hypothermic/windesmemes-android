@@ -57,6 +57,7 @@ public class AuthenticationContext {
                     .edit()
                     .putLong(PREFS_KEY_EXPIRES, time)
                     .apply();
+            context.getCurrentProfile(null);
         } else {
             preferences
                     .edit()
@@ -179,6 +180,7 @@ public class AuthenticationContext {
 
                                                             authenticationUser.setUserToken(formatted);
                                                             onFinishedCallback.onChanged(true);
+                                                            getCurrentProfile(null);
 
                                                             appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                                                                     .edit()
@@ -280,7 +282,6 @@ public class AuthenticationContext {
                                             // Success
                                             } else {
                                                 onFinishedCallback.onChanged(null);
-                                                getCurrentProfile(null);
                                             }
                                         } else {
                                             onFailure(call, new Exception("TODO response not successful"));
@@ -333,6 +334,7 @@ public class AuthenticationContext {
                     if (response.isSuccessful()) {
                         LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
                                 call.request().url(), call.request().header("Cookie"), response.body());
+
                         if (onFinishedCallback != null) {
                             onFinishedCallback.onChanged(response.body());
                         }

@@ -3,9 +3,7 @@ package nl.hypothermic.windesmemes.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -145,13 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (user.username != null) {
                         accountTitleView.setText(user.username);
                     }
-                    if (user.flair != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            accountSubtitleView.setText(Html.fromHtml("<h2>Title</h2><br><p>Description here</p>", Html.FROM_HTML_MODE_COMPACT));
-                        } else {
-                            accountSubtitleView.setText(Html.fromHtml("<h2>Title</h2><br><p>Description here</p>"));
-                        }
-                    }
+                    accountSubtitleView.setText(user.totalKarma + " karma"); // TODO string res i18n
                 }
             }
         });
