@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }));
 
 
-        AuthenticationManager.acquire(this.getApplicationContext()).refreshSession(null);
+        AuthenticationManager.acquire(this).refreshSession(null);
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
     }
 

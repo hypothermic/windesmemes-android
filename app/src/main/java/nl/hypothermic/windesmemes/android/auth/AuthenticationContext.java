@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer;
 import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.android.R;
-import nl.hypothermic.windesmemes.model.ActionResult;
 import nl.hypothermic.windesmemes.model.AuthenticationSession;
 import nl.hypothermic.windesmemes.model.AuthenticationUser;
 import nl.hypothermic.windesmemes.model.Vote;
@@ -30,10 +29,10 @@ import retrofit2.Response;
 public class AuthenticationContext {
 
     private static final String SHARED_PREFERENCES_KEY = "nl.hypothermic.windesmemes.WM.AUTH_PREFS";
-    private static final String PREFS_KEY_USER    = "user_token";
-    private static final String PREFS_KEY_EXPIRES = "expires";
+    private static final String PREFS_KEY_USER         = "user_token";
+    private static final String PREFS_KEY_EXPIRES      = "expires";
 
-    private static final long   EXPIRES_AFTER     = 518400000L; // ms
+    private static final long   EXPIRES_AFTER          = 518400000L; // = 6 days
 
     /**
      * If there was a user token stored in the shared prefs AND it was used within last 6 days, use it.<br />
@@ -51,12 +50,28 @@ public class AuthenticationContext {
 
         if (result != null && result.length() == 128 && modified >= time - EXPIRES_AFTER) {
             context.user.setUserToken(result);
-            preferences.edit().putLong(PREFS_KEY_EXPIRES, time).apply();
+            preferences
+                    .edit()
+                    .putLong(PREFS_KEY_EXPIRES, time)
+                    .apply();
         } else {
-            preferences.edit().putString(PREFS_KEY_USER, "").putLong(PREFS_KEY_EXPIRES, 0L).apply();
+            preferences
+                    .edit()
+                    .putString(PREFS_KEY_USER, "")
+                    .putLong(PREFS_KEY_EXPIRES, 0L)
+                    .apply();
         }
 
         return context;
+    }
+
+    private static void clearAuthInfo(AuthenticationContext authContext, Context appContext) {
+        authContext.user.setUserToken(null);
+        appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .edit()
+                .putString(PREFS_KEY_USER, "")
+                .putLong(PREFS_KEY_EXPIRES, 0L)
+                .apply();
     }
 
     private final AuthenticationSession session = new AuthenticationSession();
@@ -226,21 +241,46 @@ public class AuthenticationContext {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
+                                // Gebruik tijdelijk GEEN json omdat errors niet in json-formaat worden gereturned.
+//                                WindesMemesAPI.getInstance().getRatingsEndpoint().vote(vote.getWeight(), memeId, response.body(),
+//                                        "session=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<ActionResult>() {
+//                                    @Override
+//                                    public void onResponse(Call<ActionResult> call, Response<ActionResult> response) {
+//                                        if (response.isSuccessful() && response.body() != null && response.body().error.equals("ok")) {
+//                                            LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
+//                                                    call.request().url(), call.request().header("Cookie"), response.body());
+//                                            onFinishedCallback.onChanged(null);
+//                                        } else {
+//                                            onFailure(call, new Exception("TODO response not successful"));
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(Call<ActionResult> call, Throwable t) {
+//                                        LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
+//                                        onFinishedCallback.onChanged(R.string.login_error_generic);
+//                                    }
+//                                });
                                 WindesMemesAPI.getInstance().getRatingsEndpoint().vote(vote.getWeight(), memeId, response.body(),
-                                        "session=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<ActionResult>() {
+                                        "session=" + session.getToken() + "; token=" + user.getUserToken()).enqueue(new Callback<String>() {
                                     @Override
-                                    public void onResponse(Call<ActionResult> call, Response<ActionResult> response) {
-                                        if (response.isSuccessful() && response.body() != null && response.body().error.equals("ok")) {
+                                    public void onResponse(Call<String> call, Response<String> response) {
+                                        if (response.isSuccessful() && response.body() != null) {
                                             LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
                                                     call.request().url(), call.request().header("Cookie"), response.body());
-                                            onFinishedCallback.onChanged(null);
+                                            if (response.body().contains("login")) {
+                                                clearAuthInfo(AuthenticationContext.this, appContext);
+                                                onFinishedCallback.onChanged(R.string.login_error_not_authed);
+                                            } else {
+                                                onFinishedCallback.onChanged(null);
+                                            }
                                         } else {
                                             onFailure(call, new Exception("TODO response not successful"));
                                         }
                                     }
 
                                     @Override
-                                    public void onFailure(Call<ActionResult> call, Throwable t) {
+                                    public void onFailure(Call<String> call, Throwable t) {
                                         LogWrapper.error(this, "TODO handle error %s", t.getMessage()); // TODO
                                         onFinishedCallback.onChanged(R.string.login_error_generic);
                                     }
