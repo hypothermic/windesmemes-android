@@ -22,7 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Encapsulation of the authenticationSession and authenticationUser.<br />
+ * Encapsulation of the session and user.<br />
  * <br />
  * Credentials are not supposed to leave this class.
  */
@@ -38,7 +38,7 @@ public class AuthenticationContext {
     private static final long   EXPIRES_AFTER          = 518400000L; // = 6 days
 
     /**
-     * If there was a authenticationUser token stored in the shared prefs AND it was used within last 6 days, use it.<br />
+     * If there was a user token stored in the shared prefs AND it was used within last 6 days, use it.<br />
      * <br />
      * Otherwise, clear fields mentioned above ^
      */
@@ -104,7 +104,7 @@ public class AuthenticationContext {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         for (String cookie : response.headers().values("Set-Cookie")) {
-                            if (cookie != null && cookie.startsWith("authenticationSession=")) {
+                            if (cookie != null && cookie.startsWith("session=")) {
                                 if (cookie.contains(";")) {
                                     cookie = cookie.substring(0, cookie.indexOf(";"));
                                 }
@@ -140,16 +140,16 @@ public class AuthenticationContext {
     }
 
     /**
-     * Windesmemes does not have an API endpoint to verify if authenticationUser tokens are valid, so only check if null.
+     * Windesmemes does not have an API endpoint to verify if user tokens are valid, so only check if null.
      */
     public boolean isUserAuthenticated() {
         return authenticationUser.getUserToken() != null;
     }
 
     /**
-     * Authenticates the authenticationUser using the <i>username</i> and <i>password</i> passed into the function.<br />
+     * Authenticates the user using the <i>username</i> and <i>password</i> passed into the function.<br />
      * <br />
-     * If the authenticationUser was already authenticated, this immediately returns true.
+     * If the user was already authenticated, this immediately returns true.
      */
     public void userAuthenticate(final Observer<Boolean> onFinishedCallback, final String username, final String password) {
         if (isUserAuthenticated()) {
@@ -158,15 +158,13 @@ public class AuthenticationContext {
             refreshSession(new Observer<Void>() {
                 @Override
                 public void onChanged(Void aVoid) {
-                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", BuildConfig.X_API_KEY, "authenticationSession=" + authenticationSession.getToken()).enqueue(new Callback<String>() {
+                    WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf("login", BuildConfig.X_API_KEY, "session=" + authenticationSession.getToken()).enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
-                                WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, response.body(), "authenticationSession=" + authenticationSession.getToken()).enqueue(new Callback<Integer>() {
+                                WindesMemesAPI.getInstance().getAuthenticationEndpoint().getUserToken(username, password, response.body(), "session=" + authenticationSession.getToken()).enqueue(new Callback<Integer>() {
                                     @Override
                                     public void onResponse(Call<Integer> call, Response<Integer> response) {
-                                        LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
-                                                call.request().url(), call.request().header("Cookie"), response.body() != null ? response.body() : "NULL");
                                         if (response.isSuccessful() && response.body() != null) {
                                             LogWrapper.error(this, "GET %s\nHeader: %s\nResponse: %s",
                                                     call.request().url(), call.request().header("Cookie"), response.body());
@@ -243,7 +241,7 @@ public class AuthenticationContext {
                 @Override
                 public void onChanged(Void aVoid) {
                     WindesMemesAPI.getInstance().getAuthenticationEndpoint().generateCsrf(
-                            "vote", BuildConfig.X_API_KEY, "authenticationSession=" + authenticationSession.getToken()).enqueue(new Callback<String>() {
+                            "vote", BuildConfig.X_API_KEY, "session=" + authenticationSession.getToken()).enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             if (response.isSuccessful()) {
@@ -269,7 +267,7 @@ public class AuthenticationContext {
 //                                    }
 //                                });
                                 WindesMemesAPI.getInstance().getRatingsEndpoint().vote(vote.getWeight(), memeId, response.body(),
-                                        "authenticationSession=" + authenticationSession.getToken() + "; token=" + authenticationUser.getUserToken()).enqueue(new Callback<String>() {
+                                        "session=" + authenticationSession.getToken() + "; token=" + authenticationUser.getUserToken()).enqueue(new Callback<String>() {
                                     @Override
                                     public void onResponse(Call<String> call, Response<String> response) {
                                         if (response.isSuccessful() && response.body() != null) {
@@ -329,7 +327,7 @@ public class AuthenticationContext {
             onFinishedCallback.onChanged(null);
         } else {
             WindesMemesAPI.getInstance().getContentEndpoint().getCurrentUser(
-                    "authenticationSession=" + authenticationSession.getToken() + "; token=" + authenticationUser.getUserToken()).enqueue(new Callback<User>() {
+                    "session=" + authenticationSession.getToken() + "; token=" + authenticationUser.getUserToken()).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if (response.isSuccessful()) {
