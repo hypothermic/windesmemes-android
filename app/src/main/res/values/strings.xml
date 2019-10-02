@@ -2,17 +2,21 @@
     <string name="app_name">Windesmemes</string>
     <string name="action_preferences">Settings</string>
 
-    <string name="account_name_placeholder"></string>
-    <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
-    <string name="message_refresh">Herladen…</string>
-    <string name="message_refreshed">Herladen successvol.</string>
-
+    <!-- Specific to Main Activity -->
     <string name="actionbar_title_format">Windesmemes - %s</string>
+    <string name="account_name_placeholder" />
+    <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
     <string name="mode_fresh">Fresh</string>
     <string name="mode_hot">Hot</string>
     <string name="mode_trending">Trending</string>
     <string name="mode_best">Best</string>
 
+    <!-- Common words/phrases -->
+    <string name="common_karma">karma</string>
+    <string name="message_refresh">Herladen…</string>
+    <string name="message_refreshed">Herladen successvol.</string>
+
+    <!-- Specific to Login Activity -->
     <string name="login_activity_name">Inloggen met Windesmemes account</string>
     <string name="login_field_username_hint">Username</string>
     <string name="login_field_password_hint">Password</string>

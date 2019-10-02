@@ -40,6 +40,7 @@ import nl.hypothermic.windesmemes.android.ui.I18NMappings;
 import nl.hypothermic.windesmemes.android.ui.recycler.InfiniteScrollListener;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
 import nl.hypothermic.windesmemes.android.util.CircleCropTransformation;
+import nl.hypothermic.windesmemes.android.util.LocaleCompat;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.MemeMode;
 import nl.hypothermic.windesmemes.model.User;
@@ -153,7 +154,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Picasso.get().load(WindesMemesAPI.API_URL + "get_avatar?id=" + user.avatar_id)
                                 .transform(CircleCropTransformation.getInstance()).fit().centerInside().into(accountAvatar);
                     }
-                    accountSubtitleView.setText(user.totalKarma + " karma"); // TODO string res i18n
+                    accountSubtitleView.setText(String.format(LocaleCompat.getDefaultLocale(MainActivity.this),
+                                                                "%d %s", user.totalKarma, getString(R.string.common_karma)));
                 }
             }
         });
