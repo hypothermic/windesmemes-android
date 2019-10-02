@@ -140,6 +140,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onChanged(User user) {
                 if (user != null) {
+                    // API returns null when no avatar, it gets parsed to string
+                    if (!user.avatar_id.equals("null")) {
+
+                    }
                     if (user.username != null) {
                         accountTitleView.setText(user.username);
                     }
