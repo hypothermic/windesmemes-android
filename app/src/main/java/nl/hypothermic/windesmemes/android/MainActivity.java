@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         model.clearCache().getData(mode, start).observe(activity, new Observer<List<Meme>>() {
             @Override
             public void onChanged(List<Meme> memes) {
-                LogWrapper.error(this, "LOADED %d MEMES", memes.size());
                 if (append) {
                     MemeAdapter adapter = (MemeAdapter) cardView.getAdapter();
                     if (adapter != null) {
@@ -140,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cardView.addOnScrollListener(new InfiniteScrollListener(cardView, layoutManager, new Observer<InfiniteScrollListener.ObserverData<Void>>() {
             @Override
             public void onChanged(final InfiniteScrollListener.ObserverData<Void> observerData) {
-                LogWrapper.error(this, "TOTAL ITEMS: %d", observerData.getTotalItemCount());
                 refreshMemes(MainActivity.this, cardView, viewModel, lastMode, new Consumer<Void>() {
                     @Override
                     public void accept(Void aVoid) {

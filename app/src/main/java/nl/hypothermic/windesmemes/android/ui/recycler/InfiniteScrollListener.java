@@ -40,11 +40,9 @@ public class InfiniteScrollListener extends RecyclerView.OnScrollListener {
         if (!loading && (totalItemCount - visibleItemCount)
                 <= (firstVisibleItem + visibleThreshold)) {
 
-            LogWrapper.error(this, "START LOADING");
             reachedEndObserver.onChanged(new ObserverData<>(new Observer<Void>() {
                 @Override
                 public void onChanged(Void aVoid) {
-                    LogWrapper.error(this, "FINISH LOADING");
                     loading = false;
                 }
             }, totalItemCount));
