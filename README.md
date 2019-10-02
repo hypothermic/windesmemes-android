@@ -6,6 +6,7 @@ Pull requests zijn welkom.
 
 - Profile image in navigation view header
 - Drawer logo's wit maken als dark mode aanstaat
+- Clean image cache when over size limit
 - Kortere startup tijd
 - Betere recyclerview performance + smooth scrolling
 - Animatie wanneer user op up/downvote klikt
