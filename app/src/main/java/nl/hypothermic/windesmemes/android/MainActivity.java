@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -37,9 +39,11 @@ import nl.hypothermic.windesmemes.android.ui.ActivityTheme;
 import nl.hypothermic.windesmemes.android.ui.I18NMappings;
 import nl.hypothermic.windesmemes.android.ui.recycler.InfiniteScrollListener;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
+import nl.hypothermic.windesmemes.android.util.CircleCropTransformation;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.MemeMode;
 import nl.hypothermic.windesmemes.model.User;
+import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -136,16 +140,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final TextView accountTitleView    = headerView.findViewById(R.id.account_name);
         final TextView accountSubtitleView = headerView.findViewById(R.id.account_mail);
+        final ImageView accountAvatar      = headerView.findViewById(R.id.account_avatar);
         AuthenticationManager.acquire(this).registerProfileObserver(new Observer<User>() {
             @Override
             public void onChanged(User user) {
                 if (user != null) {
-                    // API returns null when no avatar, it gets parsed to string
-                    if (!user.avatar_id.equals("null")) {
-
-                    }
                     if (user.username != null) {
                         accountTitleView.setText(user.username);
+                    }
+                    // API returns null when no avatar, it gets parsed to string (ex. "null")
+                    if (user.avatar_id != null && !user.avatar_id.equals("null")) {
+                        Picasso.get().load(WindesMemesAPI.API_URL + "get_avatar?id=" + user.avatar_id)
+                                .transform(CircleCropTransformation.getInstance()).fit().centerInside().into(accountAvatar);
                     }
                     accountSubtitleView.setText(user.totalKarma + " karma"); // TODO string res i18n
                 }

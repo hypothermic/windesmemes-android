@@ -13,7 +13,7 @@ public class User {
     @SerializedName("user_level")
     public int userLevel;
 
-    @SerializedName("avatar")
+    @SerializedName("avatar_id")
     public String avatar_id;
 
     @SerializedName("bio")
