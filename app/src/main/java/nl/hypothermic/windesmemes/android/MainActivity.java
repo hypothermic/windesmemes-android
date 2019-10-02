@@ -3,10 +3,13 @@ package nl.hypothermic.windesmemes.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -38,11 +41,13 @@ import nl.hypothermic.windesmemes.android.ui.recycler.InfiniteScrollListener;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.MemeMode;
+import nl.hypothermic.windesmemes.model.User;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String SHARED_PREFERENCES_KEY = "nl.hypothermic.windesmemes.WM.USER_PREFS";
-    private static final ActivityTheme DEFAULT_THEME = ActivityTheme.LIGHT;
+    private static final String PREFS_KEY_THEME        = "theme";
+    private static final ActivityTheme DEFAULT_THEME   = ActivityTheme.LIGHT;
 
     private AppBarConfiguration appBarConfig;
     private DrawerLayout drawerLayout;
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        setTheme(ActivityTheme.fromIndex(sharedPref.getInt("theme", DEFAULT_THEME.getIndex())).getStyleId());
+        setTheme(ActivityTheme.fromIndex(sharedPref.getInt(PREFS_KEY_THEME, DEFAULT_THEME.getIndex())).getStyleId());
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -131,6 +136,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        final TextView accountTitleView    = headerView.findViewById(R.id.account_name);
+        final TextView accountSubtitleView = headerView.findViewById(R.id.account_mail);
+        AuthenticationManager.acquire(this).registerProfileObserver(new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                if (user != null) {
+                    if (user.username != null) {
+                        accountTitleView.setText(user.username);
+                    }
+                    if (user.flair != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            accountSubtitleView.setText(Html.fromHtml("<h2>Title</h2><br><p>Description here</p>", Html.FROM_HTML_MODE_COMPACT));
+                        } else {
+                            accountSubtitleView.setText(Html.fromHtml("<h2>Title</h2><br><p>Description here</p>"));
+                        }
+                    }
+                }
+            }
+        });
+
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
 
         cardView = findViewById(R.id.main_cards); // TODO butterknife or view binding (studio canary 11+)
@@ -148,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }));
 
-
         AuthenticationManager.acquire(this).refreshSession(null);
         refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
     }
@@ -165,9 +189,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return NavigationUI.navigateUp(navController, appBarConfig) || super.onSupportNavigateUp();
     }
 
+    // TODO switch is cleaner ??
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
+
         MemeMode newMode = null;
         if (id == R.id.nav_mode_hot) {
             newMode = MemeMode.HOT;
@@ -181,18 +207,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_mode_best) {
             newMode = MemeMode.BEST;
         }
-        if (id == R.id.nav_preferences) {
-            SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-            int currentTheme = preferences.getInt("theme", DEFAULT_THEME.getIndex());
-
-            // Gebruik commit i.p.v. apply want we willen zeker weten dat de value
-            // opgeslagen is zodra de activity opnieuw wordt geladen.
-            preferences.edit().putInt("theme", currentTheme == 0 ? 1 : 0).commit();
-            recreate();
-        }
         if (newMode != null) {
             refreshMemes(this, cardView, viewModel, newMode);
         }
+
+        if (id == R.id.nav_preferences) {
+            SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+            int currentTheme = preferences.getInt(PREFS_KEY_THEME, DEFAULT_THEME.getIndex());
+
+            // Gebruik commit i.p.v. apply want we willen zeker weten dat de value
+            // opgeslagen is zodra de activity opnieuw wordt geladen.
+            preferences.edit().putInt(PREFS_KEY_THEME, currentTheme == 0 ? 1 : 0).commit();
+            recreate();
+        }
+        if (id == R.id.nav_account_logout) {
+            AuthenticationManager.acquire(this).clear();
+        }
+
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
         return true;
     }

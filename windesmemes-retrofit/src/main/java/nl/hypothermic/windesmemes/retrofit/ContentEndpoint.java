@@ -6,6 +6,7 @@ import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.User;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Query;
 
 public interface ContentEndpoint {
@@ -18,6 +19,6 @@ public interface ContentEndpoint {
     Call<User> getUser(@Query("username") String username);
 
     @GET("get_user?username=")
-    Call<User> getCurrentUser();
+    Call<User> getCurrentUser(@Header("Cookie") String sessionCookie);
 
 }
