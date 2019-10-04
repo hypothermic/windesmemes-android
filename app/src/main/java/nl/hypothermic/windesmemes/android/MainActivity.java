@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AuthenticationManager.acquire(this).registerProfileObserver(new Observer<User>() {
             @Override
             public void onChanged(User user) {
+                // On user logged in
                 if (user != null) {
                     if (user.username != null) {
                         accountTitleView.setText(user.username);
@@ -156,6 +158,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     accountSubtitleView.setText(String.format(LocaleCompat.getDefaultLocale(MainActivity.this),
                                                                 "%d %s", user.totalKarma, getString(R.string.common_karma)));
+                // On user logged out
+                } else {
+                    accountAvatar.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ic_launcher_round));
+                    accountTitleView.setText("");
+                    accountSubtitleView.setText(R.string.account_mail_placeholder);
                 }
             }
         });
