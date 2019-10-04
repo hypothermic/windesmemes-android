@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (adapter != null) {
                         int oldListSize = adapter.getMemes().size();
                         adapter.getMemes().addAll(memes);
-                        //adapter.notifyDataSetChanged();
                         adapter.notifyItemRangeInserted(oldListSize, memes.size());
                     }
                 } else {

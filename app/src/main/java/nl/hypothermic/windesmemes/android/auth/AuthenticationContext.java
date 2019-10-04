@@ -71,6 +71,9 @@ public class AuthenticationContext {
 
     private static void clearAuthInfo(AuthenticationContext authContext, Context appContext) {
         authContext.authenticationUser.setUserToken(null);
+        for (Observer<User> observer : authContext.profileObservers) {
+            observer.onChanged(null);
+        }
         appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .edit()
                 .putString(PREFS_KEY_USER, "")
