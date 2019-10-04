@@ -32,6 +32,7 @@ import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
+import nl.hypothermic.windesmemes.android.util.ImageViewUtil;
 import nl.hypothermic.windesmemes.model.Meme;
 import nl.hypothermic.windesmemes.model.Vote;
 import nl.hypothermic.windesmemes.retrofit.WindesMemesAPI;
@@ -67,7 +68,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
             height = metrics.widthPixels;
         }
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
         holder.meme.setLayoutParams(layoutParams);
 
         // If local cache database contains meme image, load from cache. Otherwise, request it via the API.
@@ -85,14 +86,17 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         LogWrapper.error(this, "Error while decompressing image. TODO show error message and return"); // TODO
                     }
                     holder.meme.setImageBitmap(decompressed);
+                    ImageViewUtil.shrink(holder.meme, 16);
                 } else {
                     // Retrieve meme from API.
                     Picasso.get().load(WindesMemesAPI.BASE_URL + meme.imageUrl).fit().centerInside().into(holder.meme, new Callback() {
                         @Override
                         public void onSuccess() {
+                            // If landscape img, adjust imageview height
+                            ImageViewUtil.shrink(holder.meme, 16);
+
                             // Save to local cache database
                             final Drawable drawable = holder.meme.getDrawable();
-
                             if (drawable instanceof BitmapDrawable) {
                                 CachedAttributesDatabase.IO_THREAD.execute(new Runnable() {
                                     @Override
