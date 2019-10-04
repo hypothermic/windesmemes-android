@@ -71,9 +71,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (append) {
                     MemeAdapter adapter = (MemeAdapter) cardView.getAdapter();
                     if (adapter != null) {
+                        int oldListSize = adapter.getMemes().size();
                         adapter.getMemes().addAll(memes);
-                        // TODO mAdapter.notifyItemRangeInserted for better performance
-                        adapter.notifyDataSetChanged();
+                        //adapter.notifyDataSetChanged();
+                        adapter.notifyItemRangeInserted(oldListSize, memes.size());
                     }
                 } else {
                     cardView.setAdapter(new MemeAdapter(memes, activity, cardView));
