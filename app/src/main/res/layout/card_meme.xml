@@ -12,7 +12,7 @@
         app:cardCornerRadius="@dimen/cardview_card_rounding"
         app:cardElevation="4dp"
         app:cardMaxElevation="4dp"
-        app:cardUseCompatPadding="true"
+        app:cardUseCompatPadding="false"
         app:cardBackgroundColor="?attr/colorCardBackground">
 
         <LinearLayout
@@ -78,7 +78,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:orientation="horizontal"
                         android:textAlignment="viewEnd">
 

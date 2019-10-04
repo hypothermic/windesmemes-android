@@ -7,6 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="cardview_content_padding">12dp</dimen>
-    <dimen name="cardview_card_padding">4dp</dimen>
-    <dimen name="cardview_card_rounding">4dp</dimen>
+    <dimen name="cardview_card_padding">16dp</dimen>
+    <dimen name="cardview_card_rounding">0dp</dimen>
 </resources>
