@@ -3,6 +3,8 @@ package nl.hypothermic.windesmemes.android;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     accountSubtitleView.setText(String.format(LocaleCompat.getDefaultLocale(MainActivity.this),
                                                                 "%d %s", user.totalKarma, getString(R.string.common_karma)));
                     navigationView.getMenu().findItem(R.id.nav_account_login).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_account_register).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_account_logout).setVisible(true);
                 // On user logged out
                 } else {
@@ -168,10 +171,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     accountTitleView.setText("");
                     accountSubtitleView.setText(R.string.account_mail_placeholder);
                     navigationView.getMenu().findItem(R.id.nav_account_login).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_account_register).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_account_logout).setVisible(false);
                 }
             }
         });
+
+        ConnectivityManager cm = ContextCompat.getSystemService(this, ConnectivityManager.class);
+        if (!(cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected())) {
+            // TODO show "no internet connection" screen
+        }
 
         viewModel = ViewModelProviders.of(this).get(MemeViewModel.class);
 
@@ -222,6 +231,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // TODO show user options??
                     Snackbar.make(cardView, getString(R.string.login_error_success), Snackbar.LENGTH_LONG).show();
                 }
+                break;
+            case R.id.nav_account_register:
+                // Temporary code. TODO register in-app
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://windesmemes.nl/signup")));
                 break;
             case R.id.nav_account_logout:
                 AuthenticationManager.acquire(this).clear();

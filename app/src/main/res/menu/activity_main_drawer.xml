@@ -8,6 +8,10 @@
         android:icon="@drawable/ic_person_add_white_24dp"
         android:title="Login" />
     <item
+        android:id="@+id/nav_account_register"
+        android:icon="@drawable/ic_cake_white_24dp"
+        android:title="Register" />
+    <item
         android:id="@+id/nav_account_logout"
         android:icon="@drawable/ic_clear_black_24dp"
         android:title="Logout" />
