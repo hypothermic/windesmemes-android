@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // API returns null when no avatar, it gets parsed to string (ex. "null")
                     if (user.avatar_id != null && !user.avatar_id.equals("null")) {
                         Picasso.get().load(WindesMemesAPI.API_URL + "get_avatar?id=" + user.avatar_id)
-                                .transform(CircleCropTransformation.getInstance()).fit().centerInside().into(accountAvatar);
+                                .transform(CircleCropTransformation.getInstance())
+                                .error(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ic_launcher_round))
+                                .fit().centerInside().into(accountAvatar);
                     }
                     accountSubtitleView.setText(String.format(LocaleCompat.getDefaultLocale(MainActivity.this),
                                                                 "%d %s", user.totalKarma, getString(R.string.common_karma)));
