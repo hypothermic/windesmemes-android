@@ -37,7 +37,7 @@ import java.util.List;
 import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.MemeViewModel;
 import nl.hypothermic.windesmemes.android.ui.ActivityTheme;
-import nl.hypothermic.windesmemes.android.ui.I18NMappings;
+import nl.hypothermic.windesmemes.android.ui.ModelResourceMappings;
 import nl.hypothermic.windesmemes.android.ui.recycler.InfiniteScrollListener;
 import nl.hypothermic.windesmemes.android.ui.recycler.MemeAdapter;
 import nl.hypothermic.windesmemes.android.util.CircleCropTransformation;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 ActionBar supportActionBar = activity.getSupportActionBar();
                 if (supportActionBar != null) {
-                    supportActionBar.setTitle(String.format(activity.getString(R.string.actionbar_title_format), activity.getString(I18NMappings.getModeResource(mode))));
+                    supportActionBar.setTitle(String.format(activity.getString(R.string.actionbar_title_format), activity.getString(ModelResourceMappings.getModeResource(mode))));
                 }
                 if (callback != null) {
                     callback.accept(null);
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
 
         appBarConfig = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_mode, R.id.nav_util)
                                                 .setDrawerLayout(drawerLayout)
@@ -158,11 +158,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     accountSubtitleView.setText(String.format(LocaleCompat.getDefaultLocale(MainActivity.this),
                                                                 "%d %s", user.totalKarma, getString(R.string.common_karma)));
+                    navigationView.getMenu().findItem(R.id.nav_account_login).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_account_logout).setVisible(true);
                 // On user logged out
                 } else {
                     accountAvatar.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.mipmap.ic_launcher_round));
                     accountTitleView.setText("");
                     accountSubtitleView.setText(R.string.account_mail_placeholder);
+                    navigationView.getMenu().findItem(R.id.nav_account_login).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_account_logout).setVisible(false);
                 }
             }
         });
@@ -185,7 +189,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }));
 
         AuthenticationManager.acquire(this).refreshSession(null);
-        refreshMemes(this, cardView, viewModel, MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString())));
+
+        MemeMode defaultMode = MemeMode.fromSerialized(sharedPref.getString("default-mode", MemeMode.DEFAULT_MODE.getAsString()));
+        refreshMemes(this, cardView, viewModel, defaultMode);
+        navigationView.setCheckedItem(ModelResourceMappings.getNavigationItem(defaultMode));
     }
 
     @Override
@@ -205,34 +212,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
 
-        MemeMode newMode = null;
-        if (id == R.id.nav_mode_hot) {
-            newMode = MemeMode.HOT;
-        }
-        if (id == R.id.nav_mode_trending) {
-            newMode = MemeMode.TRENDING;
-        }
-        if (id == R.id.nav_mode_fresh) {
-            newMode = MemeMode.FRESH;
-        }
-        if (id == R.id.nav_mode_best) {
-            newMode = MemeMode.BEST;
-        }
-        if (newMode != null) {
-            refreshMemes(this, cardView, viewModel, newMode);
-        }
+        switch (id) {
+            case R.id.nav_account_login:
+                if (!AuthenticationManager.acquire(MainActivity.this).isUserAuthenticated()) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    // TODO show user options??
+                    Snackbar.make(cardView, getString(R.string.login_error_success), Snackbar.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.nav_account_logout:
+                AuthenticationManager.acquire(this).clear();
+                break;
+            case R.id.nav_mode_hot:
+                refreshMemes(this, cardView, viewModel, MemeMode.HOT);
+                break;
+            case R.id.nav_mode_trending:
+                refreshMemes(this, cardView, viewModel, MemeMode.TRENDING);
+                break;
+            case R.id.nav_mode_fresh:
+                refreshMemes(this, cardView, viewModel, MemeMode.FRESH);
+                break;
+            case R.id.nav_mode_best:
+                refreshMemes(this, cardView, viewModel, MemeMode.BEST);
+                break;
+            case R.id.nav_preferences:
+                SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+                int currentTheme = preferences.getInt(PREFS_KEY_THEME, DEFAULT_THEME.getIndex());
 
-        if (id == R.id.nav_preferences) {
-            SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-            int currentTheme = preferences.getInt(PREFS_KEY_THEME, DEFAULT_THEME.getIndex());
-
-            // Gebruik commit i.p.v. apply want we willen zeker weten dat de value
-            // opgeslagen is zodra de activity opnieuw wordt geladen.
-            preferences.edit().putInt(PREFS_KEY_THEME, currentTheme == 0 ? 1 : 0).commit();
-            recreate();
-        }
-        if (id == R.id.nav_account_logout) {
-            AuthenticationManager.acquire(this).clear();
+                // Gebruik commit i.p.v. apply want we willen zeker weten dat de value
+                // opgeslagen is zodra de activity opnieuw wordt geladen.
+                preferences.edit().putInt(PREFS_KEY_THEME, currentTheme == 0 ? 1 : 0).commit();
+                recreate();
+                break;
         }
 
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);

@@ -7,11 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
-import java.util.ArrayList;
-
 import nl.hypothermic.windesmemes.android.BuildConfig;
 import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.android.R;
+import nl.hypothermic.windesmemes.android.util.ColdObserverArrayList;
 import nl.hypothermic.windesmemes.model.AuthenticationSession;
 import nl.hypothermic.windesmemes.model.AuthenticationUser;
 import nl.hypothermic.windesmemes.model.User;
@@ -71,9 +70,7 @@ public class AuthenticationContext {
 
     private static void clearAuthInfo(AuthenticationContext authContext, Context appContext) {
         authContext.authenticationUser.setUserToken(null);
-        for (Observer<User> observer : authContext.profileObservers) {
-            observer.onChanged(null);
-        }
+        authContext.profileObservers.announce(null);
         appContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
                 .edit()
                 .putString(PREFS_KEY_USER, "")
@@ -83,7 +80,7 @@ public class AuthenticationContext {
 
     private final AuthenticationSession authenticationSession = new AuthenticationSession();
     private final AuthenticationUser authenticationUser = new AuthenticationUser();
-    private final ArrayList<Observer<User>> profileObservers = new ArrayList<>();
+    private final ColdObserverArrayList<User> profileObservers = new ColdObserverArrayList<>();
 
     private final Context appContext;
 
@@ -341,9 +338,7 @@ public class AuthenticationContext {
                         if (onFinishedCallback != null) {
                             onFinishedCallback.onChanged(response.body());
                         }
-                        for (Observer<User> observer : profileObservers) {
-                            observer.onChanged(response.body());
-                        }
+                        profileObservers.announce(response.body());
                     } else {
                         onFailure(call, new Exception("Response not successful"));
                     }

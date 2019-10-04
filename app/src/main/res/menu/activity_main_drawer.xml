@@ -3,6 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <item
+        android:id="@+id/nav_account_login"
+        android:icon="@drawable/ic_person_add_white_24dp"
+        android:title="Login" />
+    <item
+        android:id="@+id/nav_account_logout"
+        android:icon="@drawable/ic_clear_black_24dp"
+        android:title="Logout" />
+
     <group
         android:id="@+id/nav_mode"
         android:checkableBehavior="single"
@@ -33,10 +42,6 @@
                 android:id="@+id/nav_preferences"
                 android:icon="@drawable/ic_settings_black_24dp"
                 android:title="Dark Theme" />
-            <item
-                android:id="@+id/nav_account_logout"
-                android:icon="@drawable/ic_clear_black_24dp"
-                android:title="Logout" />
         </menu>
     </item>
 </menu>
