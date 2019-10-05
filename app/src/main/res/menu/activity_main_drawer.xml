@@ -43,9 +43,13 @@
         android:title="Preferences">
         <menu>
             <item
-                android:id="@+id/nav_preferences"
+                android:id="@+id/nav_preference_theme"
                 android:icon="@drawable/ic_settings_black_24dp"
                 android:title="Dark Theme" />
+            <item
+                android:id="@+id/nav_preference_policy"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Privacy Policy" />
         </menu>
     </item>
 </menu>

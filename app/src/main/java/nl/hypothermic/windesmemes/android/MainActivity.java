@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -207,18 +206,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfig) || super.onSupportNavigateUp();
     }
 
-    // TODO switch is cleaner ??
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
@@ -251,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_mode_best:
                 refreshMemes(this, cardView, viewModel, MemeMode.BEST);
                 break;
-            case R.id.nav_preferences:
+            case R.id.nav_preference_theme:
                 SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
                 int currentTheme = preferences.getInt(PREFS_KEY_THEME, DEFAULT_THEME.getIndex());
 
