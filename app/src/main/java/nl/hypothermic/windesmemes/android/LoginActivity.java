@@ -1,6 +1,7 @@
 package nl.hypothermic.windesmemes.android;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +28,7 @@ public class LoginActivity extends AppCompatActivity {
                      passwordField;
 
     private Button   interactableSubmit,
-                     interactablePolicyWM,
-                     interactablePolicyHT;
+                     interactablePolicyWM;
 
     private volatile EditText[] inputFields;
 
@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordField        = findViewById(R.id.login_field_password);
         interactableSubmit   = findViewById(R.id.login_interactable_submit);
         interactablePolicyWM = findViewById(R.id.login_interactable_policy_wm);
-        interactablePolicyHT = findViewById(R.id.login_interactable_policy_ht);
 
         inputFields = new EditText[] {
                 usernameField, passwordField
@@ -64,17 +63,21 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(Boolean aBoolean) {
                         lockFields(false, inputFields);
-                        if (aBoolean != null) {
-                            if (aBoolean) {
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            } else {
-                                usernameField.setError(getString(R.string.login_error_generic));
-                            }
+                        if (aBoolean != null && aBoolean) {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {
-                            LogWrapper.error(this, "TODO handle error 4"); // TODO
+                            usernameField.setError(getString(R.string.login_error_generic));
                         }
                     }
                 }, usernameField.getText().toString(), passwordField.getText().toString());
+            }
+        });
+
+        interactablePolicyWM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Temporary code. TODO view in-app (see MainActivity)
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://windesmemes.nl/contact/privacy")));
             }
         });
     }

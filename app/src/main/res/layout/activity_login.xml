@@ -94,15 +94,6 @@
                     android:text="@string/login_interactable_policy_wm_text"
                     android:textSize="12sp" />
 
-                <Button
-                    android:id="@+id/login_interactable_policy_ht"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="96dip"
-                    android:minHeight="40dip"
-                    android:text="@string/login_interactable_policy_ht"
-                    android:textSize="12sp" />
-
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
