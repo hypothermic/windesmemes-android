@@ -32,6 +32,7 @@ import nl.hypothermic.windesmemes.android.MainActivity;
 import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
 import nl.hypothermic.windesmemes.android.data.VoteAction;
+import nl.hypothermic.windesmemes.android.data.VoteAction.Priority;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
 import nl.hypothermic.windesmemes.android.util.ImageViewUtil;
@@ -136,7 +137,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
 
         final Observer<VoteAction> voteObserver = new Observer<VoteAction>() {
 
-            private VoteAction.Priority currentPriority = VoteAction.Priority.LOWEST;
+            private Priority currentPriority = Priority.LOWEST;
 
             @SuppressLint("SetTextI18n") /* Geen internationalization omdat het een getal is */
             @Override
@@ -191,7 +192,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                             @Override
                             public void onChanged(MemeCachedAttributes memeCachedAttributes) {
                                 if (memeCachedAttributes != null) {
-                                    voteObserver.onChanged(new VoteAction(memeCachedAttributes.getVote(), false, VoteAction.Priority.CACHE));
+                                    voteObserver.onChanged(new VoteAction(memeCachedAttributes.getVote(), false, Priority.CACHE));
                                 }
                             }
                         });
@@ -203,14 +204,14 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         // Trigger initial /// TODO REMOVE "NEUTRAL" CHECK AFTER THE GETMEMES TOKEN STUFF IS FIXED
         Vote vote = Vote.fromIndex(meme.parseVote());
         if (vote != Vote.NEUTRAL) {
-            voteObserver.onChanged(new VoteAction(vote, false, VoteAction.Priority.LIVE));
+            voteObserver.onChanged(new VoteAction(vote, false, Priority.LIVE));
         }
 
         // Trigger on user input
         View.OnClickListener upvoteListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteObserver.onChanged(new VoteAction(Vote.UPVOTE, true, VoteAction.Priority.USER));
+                voteObserver.onChanged(new VoteAction(Vote.UPVOTE, true, Priority.USER));
             }
         };
         holder.vote.setOnClickListener(upvoteListener);
@@ -218,7 +219,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteObserver.onChanged(new VoteAction(Vote.DOWNVOTE, true, VoteAction.Priority.USER));
+                voteObserver.onChanged(new VoteAction(Vote.DOWNVOTE, true, Priority.USER));
             }
         });
     }

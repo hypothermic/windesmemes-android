@@ -1,6 +1,5 @@
 package nl.hypothermic.windesmemes.android.data;
 
-import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.model.Vote;
 
 public class VoteAction {
@@ -52,7 +51,6 @@ public class VoteAction {
         }
 
         public boolean isHigherThan(Priority priority) {
-            LogWrapper.error(this, "PRIO: old %s (%d) - new %s (%d)", this.name(), this.index, priority.name(), priority.index);
             return this.getIndex() >= priority.getIndex();
         }
     }
