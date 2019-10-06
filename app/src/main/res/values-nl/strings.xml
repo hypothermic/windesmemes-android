@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Windesmemes</string>
+    <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
+    <string name="action_preferences">Instellingen</string>
+    <string name="nav_preference">Instellingen</string>
+    <string name="nav_preference_policy">Privacybeleid</string>
+    <string name="nav_preference_theme">Nacht Thema</string>
+    <string name="nav_mode">Sorteren</string>
+    <string name="nav_account_register">Registreren</string>
+    <string name="nav_account_logout">Uitloggen</string>
+    <string name="nav_account_login">Inloggen</string>
+    <string name="message_refreshed">Herladen successvol.</string>
+    <string name="message_refresh">Herladen…</string>
+    <string name="login_interactable_submit_text">Inloggen</string>
+    <string name="login_field_username_hint">Gebruikersnaam</string>
+    <string name="login_field_password_hint">Wachtwoord</string>
+    <string name="login_error_success">Je bent ingelogd!</string>
+    <string name="login_error_not_authed">Log in om deze actie uit te voeren.</string>
+    <string name="login_error_invalid_input">Ongeldige invoer!</string>
+    <string name="login_error_generic">Inloggen mislukt.</string>
+    <string name="login_activity_name">Inloggen met Windesmemes account</string>
+    <string name="common_karma">karma</string>
+    <string name="common_agree">Toestaan</string>
+    <string name="common_deny">Weigeren</string>
+</resources>

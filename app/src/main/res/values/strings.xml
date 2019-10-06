@@ -3,30 +3,32 @@
     <string name="action_preferences">Settings</string>
 
     <!-- Specific to Main Activity -->
-    <string name="actionbar_title_format">Windesmemes - %s</string>
-    <string name="account_name_placeholder" />
-    <string name="account_mail_placeholder">Log in met je Windesmemes account.</string>
-    <string name="mode_fresh">Fresh</string>
-    <string name="mode_hot">Hot</string>
-    <string name="mode_trending">Trending</string>
-    <string name="mode_best">Best</string>
+    <string name="actionbar_title_format" translatable="false">Windesmemes - %s</string>
+    <string name="account_name_placeholder" translatable="false" />
+    <string name="account_mail_placeholder">Log in using your Windesmemes account.</string>
+    <string name="mode_fresh" translatable="false">Fresh</string>
+    <string name="mode_hot" translatable="false">Hot</string>
+    <string name="mode_trending" translatable="false">Trending</string>
+    <string name="mode_best" translatable="false">Best</string>
 
     <!-- Common words/phrases -->
     <string name="common_karma">karma</string>
-    <string name="message_refresh">Herladen…</string>
-    <string name="message_refreshed">Herladen successvol.</string>
+    <string name="common_agree">Agree</string>
+    <string name="common_deny">Deny</string>
+    <string name="message_refresh">Reloading…</string>
+    <string name="message_refreshed">Reload successful.</string>
 
     <!-- Specific to Login Activity -->
-    <string name="login_activity_name">Inloggen met Windesmemes account</string>
+    <string name="login_activity_name">Authenticate using Windesmemes account</string>
     <string name="login_field_username_hint">Username</string>
     <string name="login_field_password_hint">Password</string>
     <string name="login_error_invalid_input">Invalid input!</string>
     <string name="login_error_generic">Error while authenticating!</string>
     <string name="login_error_not_authed">Please log in before using this feature.</string>
     <string name="login_error_success">You are now logged in!</string>
-    <string name="login_interactable_submit_text">Inloggen</string>
-    <string name="login_interactable_policy_wm_text">Windesmemes Privacy Policy</string>
-    <string name="login_interactable_policy_ht">Hypothermic Privacy Statement</string>
+    <string name="login_interactable_submit_text">Log in</string>
+    <string name="login_interactable_policy_wm_text" translatable="false">Windesmemes Privacy Policy</string>
+    <string name="login_interactable_policy_ht" translatable="false">Hypothermic Privacy Statement</string>
 
     <!-- Navigation drawer items/groups -->
     <string name="nav_account_login">Login</string>
