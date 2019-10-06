@@ -5,7 +5,7 @@
     <!-- Specific to Main Activity -->
     <string name="actionbar_title_format" translatable="false">Windesmemes - %s</string>
     <string name="account_name_placeholder" translatable="false" />
-    <string name="account_mail_placeholder">Log in using your Windesmemes account.</string>
+    <string name="account_mail_placeholder">Log in with Windesmemes account.</string>
     <string name="mode_fresh" translatable="false">Fresh</string>
     <string name="mode_hot" translatable="false">Hot</string>
     <string name="mode_trending" translatable="false">Trending</string>
