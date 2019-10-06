@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import nl.hypothermic.windesmemes.android.LogWrapper;
 import nl.hypothermic.windesmemes.android.MainActivity;
 import nl.hypothermic.windesmemes.android.R;
 import nl.hypothermic.windesmemes.android.auth.AuthenticationManager;
+import nl.hypothermic.windesmemes.android.data.VoteAction;
 import nl.hypothermic.windesmemes.android.data.persistance.CachedAttributesDatabase;
 import nl.hypothermic.windesmemes.android.data.persistance.MemeCachedAttributes;
 import nl.hypothermic.windesmemes.android.util.ImageViewUtil;
@@ -104,7 +106,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                                         ((BitmapDrawable) drawable).getBitmap().compress(Bitmap.CompressFormat.PNG, 80, outputStream);
                                         CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao()
-                                                .save(new MemeCachedAttributes(meme.imageUrl, outputStream.toByteArray()));
+                                                .save(new MemeCachedAttributes(meme.imageUrl, outputStream.toByteArray(), Vote.fromIndex(meme.parseVote())));
                                     }
                                 });
                             } else {
@@ -132,12 +134,20 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
             }
         });
 
-        final Observer<Vote> voteObserver = new Observer<Vote>() {
+        final Observer<VoteAction> voteObserver = new Observer<VoteAction>() {
+
+            private VoteAction.Priority currentPriority = VoteAction.Priority.LOWEST;
+
             @SuppressLint("SetTextI18n") /* Geen internationalization omdat het een getal is */
             @Override
-            public void onChanged(Vote vote) {
-                holder.vote.setText(meme.parseKarma() + vote.getWeight() + "");
-                switch (vote) {
+            public void onChanged(final VoteAction action) {
+                if (!action.getPriority().isHigherThan(currentPriority)) {
+                    return;
+                }
+                this.currentPriority = action.getPriority();
+
+                holder.vote.setText(meme.parseKarma() + action.getVote().getWeight() + "");
+                switch (action.getVote()) {
                     case UPVOTE:
                         holder.upvote  .setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_upward_green_24dp));
                         holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_black_24dp));
@@ -151,8 +161,8 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         holder.downvote.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_arrow_downward_red_24dp));
                         break;
                 }
-                if (vote != Vote.NEUTRAL) {
-                    AuthenticationManager.acquire(ctx).vote(vote, meme.id, new Observer<Integer>() {
+                if (action.isTriggeredByUser() && action.getVote() != Vote.NEUTRAL) {
+                    AuthenticationManager.acquire(ctx).vote(action.getVote(), meme.id, new Observer<Integer>() {
                         @Override
                         public void onChanged(Integer integer) {
                             if (integer != null) {
@@ -160,18 +170,47 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                             }
                         }
                     });
+                    CachedAttributesDatabase.IO_THREAD.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao().updateVote(meme.imageUrl, action.getVote());
+                        }
+                    });
                 }
             }
         };
 
-        // Trigger initial
-        voteObserver.onChanged(Vote.fromIndex(meme.parseVote()));
+        // Get from database (be aware, callback hell upcoming)
+        CachedAttributesDatabase.IO_THREAD.execute(new Runnable() {
+            @Override
+            public void run() {
+                ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CachedAttributesDatabase.getInstance(ctx).getMemeCachedAttributesDao().get(meme.imageUrl).observe((LifecycleOwner) ctx, new Observer<MemeCachedAttributes>() {
+                            @Override
+                            public void onChanged(MemeCachedAttributes memeCachedAttributes) {
+                                if (memeCachedAttributes != null) {
+                                    voteObserver.onChanged(new VoteAction(memeCachedAttributes.getVote(), false, VoteAction.Priority.CACHE));
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        // Trigger initial /// TODO REMOVE "NEUTRAL" CHECK AFTER THE GETMEMES TOKEN STUFF IS FIXED
+        Vote vote = Vote.fromIndex(meme.parseVote());
+        if (vote != Vote.NEUTRAL) {
+            voteObserver.onChanged(new VoteAction(vote, false, VoteAction.Priority.LIVE));
+        }
 
         // Trigger on user input
         View.OnClickListener upvoteListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteObserver.onChanged(Vote.UPVOTE);
+                voteObserver.onChanged(new VoteAction(Vote.UPVOTE, true, VoteAction.Priority.USER));
             }
         };
         holder.vote.setOnClickListener(upvoteListener);
@@ -179,7 +218,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
         holder.downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteObserver.onChanged(Vote.DOWNVOTE);
+                voteObserver.onChanged(new VoteAction(Vote.DOWNVOTE, true, VoteAction.Priority.USER));
             }
         });
     }

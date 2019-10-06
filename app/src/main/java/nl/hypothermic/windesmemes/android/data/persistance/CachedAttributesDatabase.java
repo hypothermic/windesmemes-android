@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadFactory;
 
 import nl.hypothermic.windesmemes.android.LogWrapper;
 
-@Database(entities = { MemeCachedAttributes.class }, version = 4, exportSchema = false)
+@Database(entities = { MemeCachedAttributes.class }, version = 5, exportSchema = false)
 public abstract class CachedAttributesDatabase extends RoomDatabase {
 
     private static final String DATABASE_PATH = "cache.db";

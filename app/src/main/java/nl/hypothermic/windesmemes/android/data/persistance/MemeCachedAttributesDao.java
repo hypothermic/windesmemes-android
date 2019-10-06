@@ -6,9 +6,12 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.TypeConverters;
 import androidx.room.Update;
 
 import java.util.List;
+
+import nl.hypothermic.windesmemes.model.Vote;
 
 @Dao
 public interface MemeCachedAttributesDao {
@@ -30,6 +33,10 @@ public interface MemeCachedAttributesDao {
 
     @Update
     void update(MemeCachedAttributes post);
+
+    @Query("UPDATE MemeCachedAttributes SET vote = :vote WHERE relativeUrl = :imageUrl")
+    @TypeConverters({VoteTypeConverter.class})
+    void updateVote(String imageUrl, Vote vote);
 
     @Delete
     void delete(MemeCachedAttributes post);
