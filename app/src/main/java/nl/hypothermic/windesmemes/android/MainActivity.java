@@ -252,6 +252,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 preferences.edit().putInt(PREFS_KEY_THEME, currentTheme == 0 ? 1 : 0).commit();
                 recreate();
                 break;
+            case R.id.nav_preference_policy:
+                // Temporary code. TODO view in-app + view HT policy
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://windesmemes.nl/contact/privacy")));
+                break;
         }
 
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
