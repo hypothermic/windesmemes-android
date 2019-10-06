@@ -27,4 +27,13 @@
     <string name="login_interactable_submit_text">Inloggen</string>
     <string name="login_interactable_policy_wm_text">Windesmemes Privacy Policy</string>
     <string name="login_interactable_policy_ht">Hypothermic Privacy Statement</string>
+
+    <!-- Navigation drawer items/groups -->
+    <string name="nav_account_login">Login</string>
+    <string name="nav_account_logout">Logout</string>
+    <string name="nav_account_register">Register</string>
+    <string name="nav_mode">Modes</string>
+    <string name="nav_preference">Preferences</string>
+    <string name="nav_preference_theme">Dark Theme</string>
+    <string name="nav_preference_policy">Privacy Policy</string>
 </resources>

@@ -6,50 +6,50 @@
     <item
         android:id="@+id/nav_account_login"
         android:icon="@drawable/ic_person_add_white_24dp"
-        android:title="Login" />
+        android:title="@string/nav_account_login" />
     <item
         android:id="@+id/nav_account_register"
         android:icon="@drawable/ic_cake_white_24dp"
-        android:title="Register" />
+        android:title="@string/nav_account_register" />
     <item
         android:id="@+id/nav_account_logout"
         android:icon="@drawable/ic_clear_black_24dp"
-        android:title="Logout" />
+        android:title="@string/nav_account_logout" />
 
     <group
         android:id="@+id/nav_mode"
         android:checkableBehavior="single"
-        android:title="Modes">
+        android:title="@string/nav_mode">
         <item
             android:id="@+id/nav_mode_hot"
             android:icon="@drawable/ic_whatshot_black_24dp"
-            android:title="Hot" />
+            android:title="@string/mode_hot" />
         <item
             android:id="@+id/nav_mode_trending"
             android:icon="@drawable/ic_trending_up_black_24dp"
-            android:title="Trending" />
+            android:title="@string/mode_trending" />
         <item
             android:id="@+id/nav_mode_fresh"
             android:icon="@drawable/ic_new_releases_black_24dp"
-            android:title="Fresh" />
+            android:title="@string/mode_fresh" />
         <item
             android:id="@+id/nav_mode_best"
             android:icon="@drawable/ic_star_black_24dp"
-            android:title="Best" />
+            android:title="@string/mode_best" />
     </group>
 
     <item
         android:id="@+id/nav_util"
-        android:title="Preferences">
+        android:title="@string/nav_preference">
         <menu>
             <item
                 android:id="@+id/nav_preference_theme"
                 android:icon="@drawable/ic_settings_black_24dp"
-                android:title="Dark Theme" />
+                android:title="@string/nav_preference_theme" />
             <item
                 android:id="@+id/nav_preference_policy"
-                android:icon="@drawable/ic_settings_black_24dp"
-                android:title="Privacy Policy" />
+                android:icon="@drawable/ic_format_quote_black_24dp"
+                android:title="@string/nav_preference_policy" />
         </menu>
     </item>
 </menu>
