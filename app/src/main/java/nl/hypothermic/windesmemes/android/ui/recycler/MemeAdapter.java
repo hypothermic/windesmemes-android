@@ -90,14 +90,14 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                         LogWrapper.error(this, "Error while decompressing image. TODO show error message and return"); // TODO
                     }
                     holder.meme.setImageBitmap(decompressed);
-                    ImageViewUtil.shrink(holder.meme, 16);
+                    ImageViewUtil.shrink(holder.meme, 0);
                 } else {
                     // Retrieve meme from API.
                     Picasso.get().load(WindesMemesAPI.BASE_URL + meme.imageUrl).fit().centerInside().into(holder.meme, new Callback() {
                         @Override
                         public void onSuccess() {
                             // If landscape img, adjust imageview height
-                            ImageViewUtil.shrink(holder.meme, 16);
+                            ImageViewUtil.shrink(holder.meme, 0);
 
                             // Save to local cache database
                             final Drawable drawable = holder.meme.getDrawable();
