@@ -10,8 +10,8 @@ android {
         buildConfigField("String", "X_API_KEY", secretsProperties['X_API_KEY'])
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 70029
-        versionName "0.02_release"
+        versionCode 70031
+        versionName "0.03_rc1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
