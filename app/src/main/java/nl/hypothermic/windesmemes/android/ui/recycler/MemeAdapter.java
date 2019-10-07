@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,7 +125,7 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
             }
         });
 
-        holder.title.setText(meme.title);
+        holder.title.setText(Html.fromHtml(meme.title));
         holder.username.setText(meme.username);
         holder.date.setText(meme.date);
 
