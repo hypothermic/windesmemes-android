@@ -87,7 +87,9 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                     Bitmap decompressed = BitmapFactory.decodeByteArray(cachedImage, 0, cachedImage.length);
 
                     if (decompressed == null) {
-                        LogWrapper.error(this, "Error while decompressing image. TODO show error message and return"); // TODO
+                        LogWrapper.error(this, "Error while decompressing image %s", memeCachedAttributes.getImageUrl());
+                        holder.announceError(R.string.cardview_error_decompression);
+                        return;
                     }
                     holder.meme.setImageBitmap(decompressed);
                     ImageViewUtil.shrink(holder.meme, 0);
@@ -112,13 +114,13 @@ public class MemeAdapter extends RecyclerView.Adapter<MemeViewHolder> {
                                     }
                                 });
                             } else {
-                                LogWrapper.error(this, "TODO error handling"); // TODO
+                                LogWrapper.error(this, "Unable to cache image with format %s", drawable.getClass().getName());
                             }
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            LogWrapper.error(this, "TODO error handling"); // TODO
+                            holder.announceError(R.string.cardview_error_generic);
                         }
                     });
                 }

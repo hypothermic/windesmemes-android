@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.RecyclerView;
 
 import nl.hypothermic.windesmemes.android.R;
@@ -37,5 +38,9 @@ public class MemeViewHolder extends RecyclerView.ViewHolder {
         //noinspection SuspiciousNameCombination // Height van imageview moet width van view zijn.
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 400);
         meme.setLayoutParams(layoutParams);
+    }
+
+    public void announceError(@StringRes int resId) {
+        title.setText(resId);
     }
 }

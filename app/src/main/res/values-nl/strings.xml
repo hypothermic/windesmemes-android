@@ -23,4 +23,6 @@
     <string name="common_karma">karma</string>
     <string name="common_agree">Toestaan</string>
     <string name="common_deny">Weigeren</string>
+    <string name="cardview_error_decompression">Kan afbeelding niet decompressen</string>
+    <string name="cardview_error_generic">Er is een fout opgetreden</string>
 </resources>

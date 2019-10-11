@@ -11,6 +11,10 @@
     <string name="mode_trending" translatable="false">Trending</string>
     <string name="mode_best" translatable="false">Best</string>
 
+    <!-- Specific to Meme CardView -->
+    <string name="cardview_error_generic">An error occurred</string>
+    <string name="cardview_error_decompression">Unable to decompress image</string>
+
     <!-- Common words/phrases -->
     <string name="common_karma">karma</string>
     <string name="common_agree">Agree</string>
